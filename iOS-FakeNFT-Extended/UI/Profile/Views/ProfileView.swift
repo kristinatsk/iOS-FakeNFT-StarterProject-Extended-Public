@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @State private var isShowingEditProfile = false
+    
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 20) {
@@ -43,15 +45,15 @@ struct ProfileView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        
-                    }) {
+                    NavigationLink {
+                        EditProfileView()
+                    } label: {
                         Image(systemName: "square.and.pencil")
-                            .foregroundColor(.primary)
                     }
                 }
             }
         }
+
     }
 }
 
