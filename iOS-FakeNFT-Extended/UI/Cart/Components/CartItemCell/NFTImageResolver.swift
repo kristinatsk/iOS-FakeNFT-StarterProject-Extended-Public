@@ -5,6 +5,7 @@
 //  Created by Павел Кузнецов on 23.09.2026.
 //
 
+import Kingfisher
 import SwiftUI
 
 // MARK: - Environment key
@@ -22,26 +23,31 @@ extension EnvironmentValues {
     }
 }
 
-// MARK: - Реальная реализация (сегодня AsyncImage)
-
-/// TODO(1.2): заменить тело на KFImage(url).resizable()
 struct NetworkNFTImage: View {
     let url: URL?
-    
+
     var body: some View {
-        AsyncImage(url: url) { phase in
-            if case .success(let image) = phase {
-                image.resizable()
+        Group {
+            if let url {
+                KFImage(url)
+                    .placeholder { placeholder }
+                    .resizable()
+                    .scaledToFill()
             } else {
                 placeholder
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .clipped()
     }
-    
+
     private var placeholder: some View {
         Image(systemName: "photo")
             .resizable()
+            .scaledToFit()
             .foregroundStyle(Color.cartTextPrimary.opacity(0.3))
+            .padding(28)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

@@ -13,7 +13,6 @@ struct CartItemCellModel: Identifiable {
     let imageURL: URL?
     let rating: Int
     let price: Double
-    let onDelete: () -> Void
 }
 // MARK: - Mocks
 
@@ -24,24 +23,21 @@ extension CartItemCellModel {
             name: "Spring",
             imageURL: URL(string: "https://example.com/spring.png"),
             rating: 5,
-            price: 1.78,
-            onDelete: {}
+            price: 1.78
         ),
         CartItemCellModel(
             id: "2",
             name: "April",
             imageURL: URL(string: "https://example.com/april.png"),
             rating: 3,
-            price: 1.78,
-            onDelete: {}
+            price: 1.78
         ),
         CartItemCellModel(
             id: "3",
             name: "Greena",
             imageURL: URL(string: "https://example.com/greena.png"),
             rating: 1,
-            price: 1.78,
-            onDelete: {}
+            price: 1.78
         )
     ]
 }

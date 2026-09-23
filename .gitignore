@@ -1,2 +1,21 @@
 iOS-FakeNFT-Extended.xcodeproj/xcuserdata/*
 iOS-FakeNFT-Extended.xcodeproj/project.xcworkspace/xcuserdata/*
+
+# Postman local workspace files
+.postman/
+postman/
+
+# Xcode user settings and build artifacts
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+*.ipa
+*.dSYM
+*.xcarchive
+
+# Swift Package Manager build artifacts
+.build/
+
+# macOS
+.DS_Store
