@@ -5,6 +5,7 @@
 //  Created by Павел Кузнецов on 22.09.2026.
 //
 
+import ProgressHUD
 import SwiftUI
 
 struct CartItemCellView: View {
@@ -45,10 +46,23 @@ struct CartItemCellView: View {
     }
     
     private var nftImage: some View {
-        imageResolver(model.imageURL)
-            .scaledToFill()
-            .frame(width: 108, height: 108)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+        Group {
+            if model.isLoading {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.cartTextPrimary.opacity(0.08))
+                    .onAppear {
+                        ProgressHUD.animate(nil, interaction: false)
+                    }
+                    .onDisappear {
+                        ProgressHUD.dismiss()
+                    }
+            } else {
+                imageResolver(model.imageURL)
+            }
+        }
+        .scaledToFill()
+        .frame(width: 108, height: 108)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
     
     private var priceString: String {

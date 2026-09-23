@@ -13,8 +13,9 @@ final class CartViewModel: ObservableObject {
     @Published private(set) var items: [CartItemCellModel] = []
     private var hasLoadedCart = false
     @Published private(set) var isLoading = false
-    var hasLoadedCartData: Bool { hasLoadedCart }
+    @Published private(set) var isLoadingItems = false
     @Published private(set) var loadingError: String?
+    @Published private(set) var hasLoadingFailures = false
 
     private let cartService: CartService?
     private let nftService: NftService?
@@ -64,35 +65,59 @@ final class CartViewModel: ObservableObject {
         guard !isLoading else { return }
         if hasLoadedCart && !forceReload { return }
         isLoading = true
+        isLoadingItems = false
         loadingError = nil
+        hasLoadingFailures = false
         defer {
             hasLoadedCart = loadingError == nil
+            isLoadingItems = false
             isLoading = false
         }
 
         do {
             let cart = try await cartService.loadCart(id: id)
-            let nfts = try await withThrowingTaskGroup(of: Nft.self) { group in
+            items = cart.nfts.map { id in
+                CartItemCellModel(
+                    id: id,
+                    name: "",
+                    imageURL: nil,
+                    rating: 0,
+                    price: 0,
+                    isLoading: true
+                )
+            }
+            isLoading = false
+            isLoadingItems = !cart.nfts.isEmpty
+
+            await withTaskGroup(of: Result<Nft, Error>.self) { group in
                 for id in cart.nfts {
                     group.addTask {
-                        try await nftService.loadNft(id: id)
+                        do {
+                            return .success(try await nftService.loadNft(id: id))
+                        } catch {
+                            return .failure(error)
+                        }
                     }
                 }
 
-                var loadedNfts: [Nft] = []
-                for try await nft in group {
-                    loadedNfts.append(nft)
+                for await result in group {
+                    switch result {
+                    case .success(let nft):
+                        guard let index = items.firstIndex(where: { $0.id == nft.id }) else { continue }
+                        items[index] = makeCellModel(from: nft)
+                    case .failure:
+                        hasLoadingFailures = true
+                        loadingError = NSLocalizedString("Error.network", comment: "")
+                    }
                 }
-                return loadedNfts
             }
+            isLoadingItems = false
 
-            let nftsByID = Dictionary(uniqueKeysWithValues: nfts.map { ($0.id, $0) })
-            items = cart.nfts.compactMap { id in
-                guard let nft = nftsByID[id] else { return nil }
-                return makeCellModel(from: nft)
-            }
         } catch {
+            hasLoadingFailures = true
             loadingError = NSLocalizedString("Error.network", comment: "")
+            isLoadingItems = false
+            isLoading = false
         }
     }
 

@@ -13,7 +13,9 @@ struct CartItemCellModel: Identifiable {
     let imageURL: URL?
     let rating: Int
     let price: Double
+    var isLoading: Bool = false
 }
+
 // MARK: - Mocks
 
 extension CartItemCellModel {
@@ -41,4 +43,3 @@ extension CartItemCellModel {
         )
     ]
 }
-

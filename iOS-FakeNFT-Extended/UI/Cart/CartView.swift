@@ -5,6 +5,7 @@
 //  Created by Павел Кузнецов на 22.09.2026.
 //
 
+import ProgressHUD
 import SwiftUI
 
 @MainActor
@@ -21,10 +22,10 @@ struct CartView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            if viewModel.isLoading {
+            if viewModel.isLoading && viewModel.items.isEmpty {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let errorMessage = viewModel.loadingError {
+            } else if let errorMessage = viewModel.loadingError, viewModel.items.isEmpty {
                 VStack(spacing: 12) {
                     Text(errorMessage)
                         .font(.caption1)
@@ -42,7 +43,7 @@ struct CartView: View {
                     .font(.bodyBold)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if viewModel.isEmpty {
+            } else if viewModel.isEmpty && viewModel.loadingError == nil {
                 CartEmptyView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
@@ -78,6 +79,19 @@ struct CartView: View {
             
         }
         .background(Color.cartBackground.ignoresSafeArea())
+        .onChange(of: viewModel.isLoadingItems) { _, isLoadingItems in
+            if isLoadingItems {
+                ProgressHUD.animate(nil, interaction: false)
+            } else if !viewModel.hasLoadingFailures {
+                ProgressHUD.dismiss()
+            } else {
+                ProgressHUD.failed(NSLocalizedString("Error.network", comment: ""), interaction: false, delay: 2)
+            }
+        }
+        .onChange(of: viewModel.hasLoadingFailures) { _, hasFailures in
+            guard hasFailures, !viewModel.isLoadingItems else { return }
+            ProgressHUD.failed(NSLocalizedString("Error.network", comment: ""), interaction: false, delay: 2)
+        }
         .task {
             guard loadsRemoteCart else { return }
             await viewModel.loadCart(
