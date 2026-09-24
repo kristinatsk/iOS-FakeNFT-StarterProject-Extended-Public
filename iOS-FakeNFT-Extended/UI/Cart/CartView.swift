@@ -10,6 +10,7 @@ import SwiftUI
 
 struct CartView: View {
     @State private var viewModel: CartViewModel
+    @State private var itemPendingDeletion: CartItemCellModel?
 
     @Environment(ServicesAssembly.self) private var servicesAssembly
     private let loadsRemoteCart: Bool
@@ -56,7 +57,9 @@ struct CartView: View {
                         LazyVStack(spacing: 0) {
                             ForEach(Array(viewModel.items.enumerated()), id: \.element.id) { index, item in
                                 VStack(spacing: 0) {
-                                    CartItemCellView(model: item)
+                                    CartItemCellView(model: item) { item in
+                                        itemPendingDeletion = item
+                                    }
                                     if index < viewModel.items.count - 1 {
                                         Color.cartSeparator.frame(height: 0.5)
                                     }
@@ -77,7 +80,16 @@ struct CartView: View {
             
             
         }
+        .toolbar(itemPendingDeletion == nil ? .visible : .hidden, for: .tabBar)
         .background(Color.cartBackground.ignoresSafeArea())
+        .overlay {
+            if let itemPendingDeletion {
+                deleteConfirmationOverlay(for: itemPendingDeletion)
+                    .transition(.opacity)
+                    .zIndex(1)
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: itemPendingDeletion?.id)
         .onChange(of: viewModel.isLoadingItems) { _, isLoadingItems in
             if isLoadingItems {
                 ProgressHUD.animate(nil, interaction: false)
@@ -101,6 +113,34 @@ struct CartView: View {
         }
     }
     
+    private func deleteConfirmationOverlay(for item: CartItemCellModel) -> some View {
+        GeometryReader { geometry in
+            ZStack {
+                Rectangle()
+                    .fill(Color.white.opacity(13.0 / 255.0))
+                    .background(.ultraThinMaterial)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        itemPendingDeletion = nil
+                    }
+                    .accessibilityHidden(true)
+
+                CartDeleteConfirmationView(
+                    item: item,
+                    onDelete: {
+                        // Deletion is intentionally not connected yet.
+                    },
+                    onCancel: {
+                        itemPendingDeletion = nil
+                    }
+                )
+                .frame(width: geometry.size.width, height: geometry.size.height)
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+        }
+        .ignoresSafeArea()
+    }
+
     private var sortButton: some View {
         Button {
             

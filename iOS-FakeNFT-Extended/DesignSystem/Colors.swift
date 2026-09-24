@@ -76,4 +76,5 @@ extension Color {
     static var cartButtonText: Color { Color(.buttonText) }
     static var cartAccentGreen: Color { Color(.accentGreen) }
     static var cartSeparator: Color { Color(.bottomMenu) }
+    static var cartDeleteText: Color { Color(.accentRed) }
 }
