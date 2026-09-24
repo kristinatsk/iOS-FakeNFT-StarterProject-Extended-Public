@@ -11,6 +11,14 @@ struct TabBarView: View {
                     )
                 }
                 .backgroundStyle(.background)
+
+            CartView()
+                .tabItem {
+                    Label(
+                        NSLocalizedString("Tab.cart", comment: ""),
+                        image: "cart"
+                    )
+                }
         }
     }
 }
