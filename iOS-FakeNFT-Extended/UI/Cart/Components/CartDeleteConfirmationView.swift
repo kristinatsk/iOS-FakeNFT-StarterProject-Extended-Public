@@ -11,6 +11,7 @@ struct CartDeleteConfirmationView: View {
     let item: CartItemCellModel
     let onDelete: () -> Void
     let onCancel: () -> Void
+    let isDeleting: Bool
     
     @Environment(\.nftImageResolver) private var imageResolver
     
@@ -31,14 +32,24 @@ struct CartDeleteConfirmationView: View {
             }
             HStack(spacing: 8) {
                 Button(action: onDelete) {
-                    Text(NSLocalizedString("cart.delete.remove", comment: ""))
-                        .font(.bodyRegular)
-                        .foregroundStyle(Color.cartDeleteText)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 44)
-                        .background(Color.cartButtonBackground)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    if isDeleting {
+                        ProgressView()
+                            .tint(Color.cartDeleteText)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 44)
+                            .background(Color.cartButtonBackground)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    } else {
+                        Text(NSLocalizedString("cart.delete.remove", comment: ""))
+                            .font(.bodyRegular)
+                            .foregroundStyle(Color.cartDeleteText)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 44)
+                            .background(Color.cartButtonBackground)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
                 }
+                .disabled(isDeleting)
                 .buttonStyle(.plain)
                 
                 Button(action: onCancel) {

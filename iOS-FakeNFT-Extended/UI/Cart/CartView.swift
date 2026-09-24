@@ -11,13 +11,9 @@ import SwiftUI
 struct CartView: View {
     @State private var viewModel: CartViewModel
     @State private var itemPendingDeletion: CartItemCellModel?
-
-    @Environment(ServicesAssembly.self) private var servicesAssembly
-    private let loadsRemoteCart: Bool
     
-    init(viewModel: CartViewModel? = nil) {
-        _viewModel = State(initialValue: viewModel ?? CartViewModel())
-        loadsRemoteCart = viewModel == nil
+    init(viewModel: CartViewModel) {
+        _viewModel = State(initialValue: viewModel)
     }
     
     var body: some View {
@@ -33,11 +29,7 @@ struct CartView: View {
                         .multilineTextAlignment(.center)
                     Button(NSLocalizedString("Error.repeat", comment: "")) {
                         Task {
-                            await viewModel.reloadCart(
-                                id: "1",
-                                cartService: servicesAssembly.cartService,
-                                nftService: servicesAssembly.nftService
-                            )
+                            await viewModel.reloadCart()
                         }
                     }
                     .font(.bodyBold)
@@ -90,6 +82,7 @@ struct CartView: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: itemPendingDeletion?.id)
+        .animation(.none, value: viewModel.items.map(\.id))
         .onChange(of: viewModel.isLoadingItems) { _, isLoadingItems in
             if isLoadingItems {
                 ProgressHUD.animate(nil, interaction: false)
@@ -104,12 +97,7 @@ struct CartView: View {
             ProgressHUD.failed(NSLocalizedString("Error.network", comment: ""), interaction: false, delay: 2)
         }
         .task {
-            guard loadsRemoteCart else { return }
-            await viewModel.loadCart(
-                id: "1",
-                cartService: servicesAssembly.cartService,
-                nftService: servicesAssembly.nftService
-            )
+            await viewModel.loadCart()
         }
     }
     
@@ -128,11 +116,20 @@ struct CartView: View {
                 CartDeleteConfirmationView(
                     item: item,
                     onDelete: {
-                        // Deletion is intentionally not connected yet.
+                        Task {
+                            let deleted = await viewModel.removeItem(id: item.id)
+                            if deleted {
+                                itemPendingDeletion = nil
+                            } else if let message = viewModel.deletionError {
+                                ProgressHUD.failed(message, interaction: false, delay: 2)
+                                viewModel.clearDeletionError()
+                            }
+                        }
                     },
                     onCancel: {
                         itemPendingDeletion = nil
-                    }
+                    },
+                    isDeleting: viewModel.deletionRequestID == item.id
                 )
                 .frame(width: geometry.size.width, height: geometry.size.height)
             }
@@ -156,12 +153,10 @@ struct CartView: View {
 }
 
 #Preview("С товарами") {
-    CartView(viewModel: CartViewModel.mock())
+    CartView(viewModel: .mock())
         .environment(\.nftImageResolver) { AnyView(MockNFTImage(url: $0)) }
-        .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))
 }
 
 #Preview("Пустая") {
-    CartView(viewModel: CartViewModel())
-        .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))
+    CartView(viewModel: .mock(items: []))
 }

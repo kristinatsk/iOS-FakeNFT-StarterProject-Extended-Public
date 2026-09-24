@@ -12,6 +12,8 @@
 		32721C03306414320009896D /* CartService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32721C02306414320009896D /* CartService.swift */; };
 		32721C05306535BB0009896D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 32721C04306535BB0009896D /* Localizable.xcstrings */; };
 		32B7AC573065465E0077B9E3 /* CartDeleteConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B7AC563065465E0077B9E3 /* CartDeleteConfirmationView.swift */; };
+		32B7AC7E30659E050077B9E3 /* MockServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B7AC7D30659E000077B9E3 /* MockServices.swift */; };
+		32B7AC803065BFAD0077B9E3 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 32B7AC7F3065BFAD0077B9E3 /* Config.xcconfig */; };
 		32D6AA1430634CD70024AB65 /* NFTImageResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D6AA1330634CD30024AB65 /* NFTImageResolver.swift */; };
 		32FF479530631B42000A6062 /* CartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32FF479430631B3B000A6062 /* CartView.swift */; };
 		32FF479830631B74000A6062 /* CartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32FF479730631B6D000A6062 /* CartViewModel.swift */; };
@@ -80,6 +82,9 @@
 		32721C02306414320009896D /* CartService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartService.swift; sourceTree = "<group>"; };
 		32721C04306535BB0009896D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		32B7AC563065465E0077B9E3 /* CartDeleteConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartDeleteConfirmationView.swift; sourceTree = "<group>"; };
+		32B7AC7D30659E000077B9E3 /* MockServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServices.swift; sourceTree = "<group>"; };
+		32B7AC7F3065BFAD0077B9E3 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		32B7AC813065C2E70077B9E3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		32D6AA1330634CD30024AB65 /* NFTImageResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTImageResolver.swift; sourceTree = "<group>"; };
 		32FF479430631B3B000A6062 /* CartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartView.swift; sourceTree = "<group>"; };
 		32FF479730631B6D000A6062 /* CartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewModel.swift; sourceTree = "<group>"; };
@@ -217,6 +222,7 @@
 		ABC5E16A2C31F5AF002B4068 /* iOS-FakeNFT-Extended */ = {
 			isa = PBXGroup;
 			children = (
+				32B7AC813065C2E70077B9E3 /* Info.plist */,
 				ABC5E16B2C31F5AF002B4068 /* iOS_FakeNFT_ExtendedApp.swift */,
 				ABC5E1952C31F64A002B4068 /* DesignSystem */,
 				ABC5E19A2C31F687002B4068 /* Foundation */,
@@ -226,6 +232,7 @@
 				ABC5E16F2C31F5AF002B4068 /* Assets.xcassets */,
 				ABC5E1712C31F5AF002B4068 /* Preview Content */,
 				32721C04306535BB0009896D /* Localizable.xcstrings */,
+				32B7AC7F3065BFAD0077B9E3 /* Config.xcconfig */,
 			);
 			path = "iOS-FakeNFT-Extended";
 			sourceTree = "<group>";
@@ -233,6 +240,7 @@
 		ABC5E1712C31F5AF002B4068 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
+				32B7AC7D30659E000077B9E3 /* MockServices.swift */,
 				ABC5E1722C31F5AF002B4068 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
@@ -488,6 +496,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32B7AC803065BFAD0077B9E3 /* Config.xcconfig in Resources */,
 				ABC5E1732C31F5AF002B4068 /* Preview Assets.xcassets in Resources */,
 				32721C05306535BB0009896D /* Localizable.xcstrings in Resources */,
 				ABC5E1702C31F5AF002B4068 /* Assets.xcassets in Resources */,
@@ -532,6 +541,7 @@
 				32FF47A030631C18000A6062 /* CartItemCellView.swift in Sources */,
 				32FF479530631B42000A6062 /* CartView.swift in Sources */,
 				ABC5E1D52C320446002B4068 /* NftDetailInput.swift in Sources */,
+				32B7AC7E30659E050077B9E3 /* MockServices.swift in Sources */,
 				ABC5E16E2C31F5AF002B4068 /* ContentView.swift in Sources */,
 				32FF47A230631C53000A6062 /* CartItemCellModel.swift in Sources */,
 				ABC5E1B92C31FD51002B4068 /* TestCatalogView.swift in Sources */,
@@ -593,6 +603,7 @@
 /* Begin XCBuildConfiguration section */
 		ABC5E18A2C31F5B0002B4068 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 32B7AC7F3065BFAD0077B9E3 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -657,6 +668,7 @@
 		};
 		ABC5E18B2C31F5B0002B4068 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 32B7AC7F3065BFAD0077B9E3 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -722,6 +734,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"iOS-FakeNFT-Extended/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS-FakeNFT-Extended/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -750,6 +763,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"iOS-FakeNFT-Extended/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS-FakeNFT-Extended/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
