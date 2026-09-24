@@ -70,10 +70,10 @@ extension UIColor {
 
 // MARK: - Cart
 extension Color {
-    static var cartBackground: Color { Color("screenBackground") }
-    static var cartTextPrimary: Color { Color("primaryText") }
-    static var cartButtonBackground: Color { Color("buttonBackground") }
-    static var cartButtonText: Color { Color("buttonText") }
-    static var cartAccentGreen: Color { Color("accentGreen") }
-    static var cartSeparator: Color { Color("bottomMenu") }
+    static var cartBackground: Color { Color(.screenBackground) }
+    static var cartTextPrimary: Color { Color(.primaryText) }
+    static var cartButtonBackground: Color { Color(.buttonBackground) }
+    static var cartButtonText: Color { Color(.buttonText) }
+    static var cartAccentGreen: Color { Color(.accentGreen) }
+    static var cartSeparator: Color { Color(.bottomMenu) }
 }

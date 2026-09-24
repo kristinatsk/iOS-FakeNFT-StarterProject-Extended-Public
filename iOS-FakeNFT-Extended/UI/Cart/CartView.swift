@@ -8,15 +8,14 @@
 import ProgressHUD
 import SwiftUI
 
-@MainActor
 struct CartView: View {
-    @StateObject private var viewModel: CartViewModel
+    @State private var viewModel: CartViewModel
 
     @Environment(ServicesAssembly.self) private var servicesAssembly
     private let loadsRemoteCart: Bool
     
     init(viewModel: CartViewModel? = nil) {
-        _viewModel = StateObject(wrappedValue: viewModel ?? CartViewModel())
+        _viewModel = State(initialValue: viewModel ?? CartViewModel())
         loadsRemoteCart = viewModel == nil
     }
     
@@ -106,13 +105,13 @@ struct CartView: View {
         Button {
             
         } label: {
-            Image("sort")
+            Image(.sort)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 21, height: 13)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Сортировка NFT")
+        .accessibilityLabel(NSLocalizedString("Accessibility.cart.sort", comment: ""))
     }
 }
 

@@ -8,6 +8,10 @@
 import Kingfisher
 import SwiftUI
 
+private enum SystemImageName {
+    static let photo = "photo"
+}
+
 // MARK: - Environment key
 
 private struct NFTImageResolverKey: EnvironmentKey {
@@ -42,7 +46,7 @@ struct NetworkNFTImage: View {
     }
 
     private var placeholder: some View {
-        Image(systemName: "photo")
+        Image(systemName: SystemImageName.photo)
             .resizable()
             .scaledToFit()
             .foregroundStyle(Color.cartTextPrimary.opacity(0.3))
@@ -60,7 +64,7 @@ struct MockNFTImage: View {
         if let url, let name = mockImageName(from: url) {
             Image(name).resizable()
         } else {
-            Image(systemName: "photo")
+            Image(systemName: SystemImageName.photo)
                 .resizable()
                 .foregroundStyle(Color.cartTextPrimary.opacity(0.3))
         }

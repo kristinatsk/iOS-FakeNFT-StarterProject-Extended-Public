@@ -14,7 +14,7 @@ struct CartItemCellView: View {
     
     
     var body: some View {
-        HStack(alignment: .center, spacing: 20) {
+        HStack(spacing: 20) {
             nftImage
             VStack(alignment: .leading, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
@@ -73,13 +73,13 @@ struct CartItemCellView: View {
         Button {
             // TODO: Remove this NFT from the order via the API.
         } label: {
-            Image("trash")
+            Image(.trash)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 40, height: 40)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Удалить из корзины")
+        .accessibilityLabel(NSLocalizedString("Accessibility.cart.remove", comment: ""))
     }
 }
 

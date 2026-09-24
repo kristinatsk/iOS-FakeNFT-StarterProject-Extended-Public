@@ -19,7 +19,11 @@ struct CartRatingView: View {
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Рейтинг \(rating) из 5")
+        .accessibilityLabel(String.localizedStringWithFormat(
+            NSLocalizedString("Accessibility.cart.rating", comment: ""),
+            rating,
+            5
+        ))
     }
 }
 

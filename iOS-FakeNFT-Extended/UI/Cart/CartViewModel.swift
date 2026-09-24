@@ -6,16 +6,18 @@
 //
 
 import Foundation
+import Observation
 import SwiftUI
 
+@Observable
 @MainActor
-final class CartViewModel: ObservableObject {
-    @Published private(set) var items: [CartItemCellModel] = []
+final class CartViewModel {
+    private(set) var items: [CartItemCellModel] = []
     private var hasLoadedCart = false
-    @Published private(set) var isLoading = false
-    @Published private(set) var isLoadingItems = false
-    @Published private(set) var loadingError: String?
-    @Published private(set) var hasLoadingFailures = false
+    private(set) var isLoading = false
+    private(set) var isLoadingItems = false
+    private(set) var loadingError: String?
+    private(set) var hasLoadingFailures = false
 
     private let cartService: CartService?
     private let nftService: NftService?
