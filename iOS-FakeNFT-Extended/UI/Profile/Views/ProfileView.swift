@@ -34,8 +34,8 @@ struct ProfileView: View {
                 }
                 
                 List {
-                    NavigationLink("Мои NFT (112)", destination: Text("Экран Мои NFT"))
-                    NavigationLink("Избранные NFT (11)", destination: Text("Экран Избранные NFT"))
+                    NavigationLink("Мои NFT (112)", destination: MyNFTView())
+                    NavigationLink("Избранные NFT (11)", destination: FavoriteNFTView())
                     
                 }
                 .listStyle(.plain)
