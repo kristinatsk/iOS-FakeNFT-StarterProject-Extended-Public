@@ -5,7 +5,6 @@
 //  Created by Павел Кузнецов на 22.09.2026.
 //
 
-import ProgressHUD
 import SwiftUI
 
 struct CartItemCellView: View {
@@ -49,12 +48,6 @@ struct CartItemCellView: View {
             if model.isLoading {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color.cartTextPrimary.opacity(0.08))
-                    .onAppear {
-                        ProgressHUD.animate(nil, interaction: false)
-                    }
-                    .onDisappear {
-                        ProgressHUD.dismiss()
-                    }
             } else {
                 imageResolver(model.imageURL)
             }

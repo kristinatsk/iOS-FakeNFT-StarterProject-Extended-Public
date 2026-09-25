@@ -94,10 +94,10 @@ struct CartView: View {
         .onChange(of: viewModel.isLoadingItems) { _, isLoadingItems in
             if isLoadingItems {
                 ProgressHUD.animate(nil, interaction: false)
-            } else if !viewModel.hasLoadingFailures {
-                ProgressHUD.dismiss()
-            } else {
+            } else if viewModel.hasLoadingFailures {
                 ProgressHUD.failed(String(localized: "Error.network"), interaction: false, delay: 2)
+            } else {
+                ProgressHUD.dismiss()
             }
         }
         .onChange(of: viewModel.hasLoadingFailures) { _, hasFailures in
