@@ -28,7 +28,7 @@ struct CartItemCellView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(NSLocalizedString("cart.price", comment: ""))
+                    Text("cart.price")
                         .font(.caption2)
 
                     Text(priceString)
@@ -78,7 +78,7 @@ struct CartItemCellView: View {
                 .frame(width: 40, height: 40)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(NSLocalizedString("Accessibility.cart.remove", comment: ""))
+        .accessibilityLabel(Text("Accessibility.cart.remove"))
     }
 }
 

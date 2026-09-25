@@ -11,7 +11,7 @@ struct CartEmptyView: View {
     var body: some View {
         VStack {
             Spacer()
-            Text(NSLocalizedString("cart.empty", comment: ""))
+            Text("cart.empty")
                 .font(.bodyBold)
                 .foregroundStyle(Color.cartTextPrimary)
                 .multilineTextAlignment(.center)

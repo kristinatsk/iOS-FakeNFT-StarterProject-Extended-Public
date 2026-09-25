@@ -45,6 +45,11 @@ final class CartViewModel {
     func loadCart() async { await loadCart(forceReload: false) }
     func reloadCart() async { await loadCart(forceReload: true) }
     
+    private var savedSortOption: CartSortOption {
+        let rawValue = UserDefaults.standard.string(forKey: CartSortOption.userDefaultsKey)
+        return rawValue.flatMap(CartSortOption.init(rawValue:)) ?? .defaultOption
+    }
+
     private func loadCart(forceReload: Bool) async {
         guard !isLoading else { return }
         if hasLoadedCart && !forceReload { return }
@@ -87,18 +92,19 @@ final class CartViewModel {
                     case .success(let nft):
                         guard let index = items.firstIndex(where: { $0.id == nft.id }) else { continue }
                         items[index] = makeCellModel(from: nft)
-                    case .failure(let error):
+                    case .failure:
                         hasLoadedCart = false
                         hasLoadingFailures = true
-                        loadingError = NSLocalizedString("Error.network", comment: "")
+                        loadingError = String(localized: "Error.network")
                     }
                 }
             }
             isLoadingItems = false
+            sortItems(by: savedSortOption)
             
         } catch {
             hasLoadingFailures = true
-            loadingError = NSLocalizedString("Error.network", comment: "")
+            loadingError = String(localized: "Error.network")
         }
     }
     
@@ -122,8 +128,19 @@ final class CartViewModel {
             return true
         } catch {
             items.insert(removedItem, at: min(itemIndex, items.count))
-            deletionError = NSLocalizedString("Error.network", comment: "")
+            deletionError = String(localized: "Error.network")
             return false
+        }
+    }
+    
+    func sortItems(by option: CartSortOption) {
+        switch option {
+        case .price:
+            items.sort { $0.price < $1.price }
+        case .rating:
+            items.sort { $0.rating > $1.rating }
+        case .name:
+            items.sort { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
         }
     }
     

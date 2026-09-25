@@ -11,7 +11,15 @@ import SwiftUI
 struct CartView: View {
     @State private var viewModel: CartViewModel
     @State private var itemPendingDeletion: CartItemCellModel?
+    @State private var showSortDialog = false
     
+    @AppStorage(CartSortOption.userDefaultsKey)
+    private var selectedSortOption = CartSortOption.defaultOption.rawValue
+
+    private var selectedSortOptionValue: CartSortOption {
+        CartSortOption(rawValue: selectedSortOption) ?? .defaultOption
+    }
+
     init(viewModel: CartViewModel) {
         _viewModel = State(initialValue: viewModel)
     }
@@ -27,7 +35,7 @@ struct CartView: View {
                         .font(.caption1)
                         .foregroundStyle(Color.cartTextPrimary)
                         .multilineTextAlignment(.center)
-                    Button(NSLocalizedString("Error.repeat", comment: "")) {
+                    Button("Error.repeat") {
                         Task {
                             await viewModel.reloadCart()
                         }
@@ -89,15 +97,16 @@ struct CartView: View {
             } else if !viewModel.hasLoadingFailures {
                 ProgressHUD.dismiss()
             } else {
-                ProgressHUD.failed(NSLocalizedString("Error.network", comment: ""), interaction: false, delay: 2)
+                ProgressHUD.failed(String(localized: "Error.network"), interaction: false, delay: 2)
             }
         }
         .onChange(of: viewModel.hasLoadingFailures) { _, hasFailures in
             guard hasFailures, !viewModel.isLoadingItems else { return }
-            ProgressHUD.failed(NSLocalizedString("Error.network", comment: ""), interaction: false, delay: 2)
+            ProgressHUD.failed(String(localized: "Error.network"), interaction: false, delay: 2)
         }
         .task {
             await viewModel.loadCart()
+            viewModel.sortItems(by: selectedSortOptionValue)
         }
     }
     
@@ -140,15 +149,42 @@ struct CartView: View {
 
     private var sortButton: some View {
         Button {
-            
+            showSortDialog = true
         } label: {
             Image(.sort)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 21, height: 13)
         }
+        .confirmationDialog(
+            "Cart.sort",
+            isPresented: $showSortDialog,
+            titleVisibility: .visible
+        ) {
+            sortDialog
+        }
         .buttonStyle(.plain)
-        .accessibilityLabel(NSLocalizedString("Accessibility.cart.sort", comment: ""))
+        .accessibilityLabel("Accessibility.cart.sort")
+    }
+    
+    @ViewBuilder
+    private var sortDialog: some View {
+        Button("Cart.sort.price") {
+            selectedSortOption = CartSortOption.price.rawValue
+            viewModel.sortItems(by: selectedSortOptionValue)
+        }
+        
+        Button("Cart.sort.rating") {
+            selectedSortOption = CartSortOption.rating.rawValue
+            viewModel.sortItems(by: selectedSortOptionValue)
+        }
+        
+        Button("Cart.sort.name") {
+            selectedSortOption = CartSortOption.name.rawValue
+            viewModel.sortItems(by: selectedSortOptionValue)
+        }
+        
+        Button("Common.cancel", role: .cancel) { }
     }
 }
 

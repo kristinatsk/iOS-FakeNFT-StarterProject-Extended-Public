@@ -22,7 +22,7 @@ struct CartDeleteConfirmationView: View {
                     .frame(width: 108, height: 108)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                 
-                Text(NSLocalizedString("cart.delete.confirm", comment: ""))
+                Text("cart.delete.confirm")
                     .font(.bodyRegular)
                     .foregroundStyle(Color.cartTextPrimary)
                     .multilineTextAlignment(.center)
@@ -40,7 +40,7 @@ struct CartDeleteConfirmationView: View {
                             .background(Color.cartButtonBackground)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     } else {
-                        Text(NSLocalizedString("cart.delete.remove", comment: ""))
+                        Text("cart.delete.remove")
                             .font(.bodyRegular)
                             .foregroundStyle(Color.cartDeleteText)
                             .frame(maxWidth: .infinity)
@@ -53,7 +53,7 @@ struct CartDeleteConfirmationView: View {
                 .buttonStyle(.plain)
                 
                 Button(action: onCancel) {
-                    Text(NSLocalizedString("cart.delete.cancel", comment: ""))
+                    Text("cart.delete.cancel")
                         .font(.bodyRegular)
                         .foregroundStyle(Color.cartButtonText)
                         .frame(maxWidth: .infinity)

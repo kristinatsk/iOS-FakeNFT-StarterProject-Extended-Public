@@ -8,7 +8,7 @@ struct TabBarView: View {
             TestCatalogView()
                 .tabItem {
                     Label(
-                        NSLocalizedString("Tab.catalog", comment: ""),
+                        "Tab.catalog",
                         systemImage: "square.stack.3d.up.fill"
                     )
                 }
@@ -20,7 +20,7 @@ struct TabBarView: View {
             ))
             .tabItem {
                 Label(
-                    NSLocalizedString("Tab.cart", comment: ""),
+                    "Tab.cart",
                     image: "cart"
                 )
             }
