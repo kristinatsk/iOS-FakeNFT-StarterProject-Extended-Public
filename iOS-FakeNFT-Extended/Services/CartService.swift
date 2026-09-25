@@ -7,19 +7,24 @@
 
 import Foundation
 
-protocol CartService {
+protocol CartService: Sendable {
     func loadCart(id: String) async throws -> CartItem
+    func updateCart(id: String, nftIDs: [String]) async throws
 }
 
 @MainActor
 final class CartServiceImpl: CartService {
     private let networkClient: NetworkClient
-
+    
     init(networkClient: NetworkClient) {
         self.networkClient = networkClient
     }
-
+    
     func loadCart(id: String) async throws -> CartItem {
-        try await networkClient.send(request: CartRequest(id: id))
+        try await networkClient.send(request: CartRequest(orderId: id))
+    }
+    
+    func updateCart(id: String, nftIDs: [String]) async throws {
+        _ = try await networkClient.send(request: CartRequest(orderId: id, action: .update(nfts: nftIDs)))
     }
 }

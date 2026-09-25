@@ -13,7 +13,13 @@ struct CartTotalView: View {
     var body: some View {
         HStack(spacing: 24) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(countString)
+                Text(
+                    String(
+                        localized: "cart.count.format",
+                        defaultValue: "\(model.count) NFTs",
+                        comment: "Number of NFTs in the cart."
+                    )
+                )
                     .font(.caption1)
                     .foregroundStyle(Color.cartTextPrimary)
                 
@@ -35,7 +41,7 @@ struct CartTotalView: View {
         Button {
             model.onPay()
         } label: {
-            Text(NSLocalizedString("cart.pay", comment: ""))
+            Text("cart.pay")
                 .font(.bodyBold)
                 .foregroundStyle(Color.cartButtonText)
                 .frame(width: 240, height: 44)
@@ -43,11 +49,6 @@ struct CartTotalView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.plain)
-    }
-    
-    private var countString: String {
-        let format = NSLocalizedString("cart.count.format", comment: "")
-        return String.localizedStringWithFormat(format, model.count)
     }
     
     private var totalString: String {

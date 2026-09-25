@@ -19,11 +19,13 @@ struct CartRatingView: View {
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(String.localizedStringWithFormat(
-            NSLocalizedString("Accessibility.cart.rating", comment: ""),
-            rating,
-            5
-        ))
+        .accessibilityLabel(
+            String(
+                localized: "Accessibility.cart.rating",
+                defaultValue: "Rating \(rating) out of 5",
+                comment: "Accessibility label describing the NFT rating."
+            )
+        )
     }
 }
 
