@@ -46,6 +46,7 @@
 		C1A3600730606B75000670FA /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A3600630606B75000670FA /* EditProfileView.swift */; };
 		C1BA85023065999D0054D122 /* MyNFTView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BA85013065999D0054D122 /* MyNFTView.swift */; };
 		C1BA8504306599AA0054D122 /* FavoriteNFTView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BA8503306599AA0054D122 /* FavoriteNFTView.swift */; };
+		C1BA8506306AEFD20054D122 /* MockNFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BA8505306AEFD20054D122 /* MockNFT.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +108,7 @@
 		C1A3600630606B75000670FA /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		C1BA85013065999D0054D122 /* MyNFTView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyNFTView.swift; sourceTree = "<group>"; };
 		C1BA8503306599AA0054D122 /* FavoriteNFTView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteNFTView.swift; sourceTree = "<group>"; };
+		C1BA8505306AEFD20054D122 /* MockNFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNFT.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -329,6 +331,7 @@
 			children = (
 				C1B7AED5306452B0003050F4 /* ViewModels */,
 				C1B7AED430645294003050F4 /* Views */,
+				C1BA8505306AEFD20054D122 /* MockNFT.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -490,6 +493,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1BA8506306AEFD20054D122 /* MockNFT.swift in Sources */,
 				C1A3600730606B75000670FA /* EditProfileView.swift in Sources */,
 				ABC5E1992C31F666002B4068 /* Fonts.swift in Sources */,
 				ABC5E1CF2C32041D002B4068 /* NftDetailViewController.swift in Sources */,

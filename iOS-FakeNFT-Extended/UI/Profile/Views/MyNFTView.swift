@@ -1,45 +1,10 @@
 import SwiftUI
 
-struct MockNFT: Identifiable {
-    let id = UUID()
-    let name: String
-    let author: String
-    let price: String
-    let rating: Double
-    let isFavorite: Bool
-    let imageName: String
-}
-
 struct MyNFTView: View {
-    let nft: [MockNFT] = [
-        MockNFT(
-            name: "Lilo",
-            author: "от John Doe",
-            price: "1,78 ETH",
-            rating: 3.0,
-            isFavorite: false,
-            imageName: ""
-        ),
-        MockNFT(
-            name: "Spring",
-            author: "от John Doe",
-            price: "1,78 ETH",
-            rating: 3.0,
-            isFavorite: false,
-            imageName: ""
-        ),
-        MockNFT(
-            name: "April",
-            author: "от John Doe",
-            price: "1,78 ETH",
-            rating: 3.0,
-            isFavorite: true,
-            imageName: ""
-        )
-    ]
+
     @State private var isShowingSortMenu = false
     var body: some View {
-        if nft.isEmpty {
+        if mockMyNFTs.isEmpty {
             VStack {
                 Spacer()
                 
@@ -52,7 +17,7 @@ struct MyNFTView: View {
             .navigationBarTitleDisplayMode(.inline)
         } else {
             List {
-                ForEach(nft) { item in
+                ForEach(mockMyNFTs) { item in
                     HStack(spacing: 16) {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color.gray.opacity(0.2))
