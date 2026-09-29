@@ -5,19 +5,23 @@
 //  Created by Андрей Урсан on 26.09.2026.
 //
 
-import SwiftUI
-import UIKit
+import Foundation
 
-enum StatisticsModule {
+protocol StatisticsServiceProtocol {
+    func fetchUsers() async throws -> [StatisticsUserDTO]
+}
 
-    static func makeRoot(
-        servicesAssembly: ServicesAssembly
-    ) -> UIViewController {
+final class StatisticsService: StatisticsServiceProtocol {
 
-        let viewModel = StatisticsViewModel()
+    private let client: NetworkClient
 
-        let view = StatisticsView(viewModel: viewModel)
+    init(client: NetworkClient = DefaultNetworkClient()) {
+        self.client = client
+    }
 
-        return UIHostingController(rootView: view)
+    func fetchUsers() async throws -> [StatisticsUserDTO] {
+        let request = UsersRequest()
+
+        return try await client.send(request: request)
     }
 }

@@ -6,14 +6,18 @@
 //
 
 import SwiftUI
+import UIKit
 
 enum StatisticsModule {
-    
-    static func makeRoot(servicesAssembly: ServicesAssembly) -> some View {
-        let viewModel = StatisticsViewModel(
-            service: servicesAssembly.statisticsService
-        )
-        
-        return StatisticsView(viewModel: viewModel)
+
+    static func makeRoot(
+        servicesAssembly: ServicesAssembly
+    ) -> UIViewController {
+
+        let viewModel = StatisticsViewModel()
+
+        let view = StatisticsView(viewModel: viewModel)
+
+        return UIHostingController(rootView: view)
     }
 }

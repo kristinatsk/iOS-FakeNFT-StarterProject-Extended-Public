@@ -14,7 +14,6 @@ final class StatisticsViewModel: ObservableObject {
     @Published private(set) var users: [StatisticsUserDomain] = []
     @Published private(set) var isLoading = false
     @Published var errorMessage: String?
-
     @Published private(set) var sortOption: StatisticsSortOption
 
     private let service: StatisticsServiceProtocol
@@ -38,25 +37,23 @@ final class StatisticsViewModel: ObservableObject {
     func viewDidLoad() {
         isLoading = true
 
-        service.fetchUsers { [weak self] result in
-            guard let self else { return }
+        Task {
+            do {
+                let dto = try await service.fetchUsers()
 
-            Task { @MainActor in
-                self.isLoading = false
+                let mappedUsers = mapper.map(dto)
 
-                switch result {
-                case .success(let dto):
-                    let mappedUsers = self.mapper.map(dto)
+                users = sorter.sort(
+                    mappedUsers,
+                    by: sortOption
+                )
 
-                    self.users = self.sorter.sort(
-                        mappedUsers,
-                        by: self.sortOption
-                    )
+                isLoading = false
 
-                case .failure(let error):
-                    print("Statistics error:", error)
-                    self.errorMessage = "Не удалось загрузить статистику"
-                }
+            } catch {
+                print("Statistics error:", error)
+                isLoading = false
+                errorMessage = "Не удалось загрузить статистику"
             }
         }
     }
@@ -65,6 +62,9 @@ final class StatisticsViewModel: ObservableObject {
         sortOption = option
         sortStorage.save(option)
 
-        users = sorter.sort(users, by: option)
+        users = sorter.sort(
+            users,
+            by: option
+        )
     }
 }
