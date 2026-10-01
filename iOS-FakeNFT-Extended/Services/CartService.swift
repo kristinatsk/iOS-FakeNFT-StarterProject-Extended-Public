@@ -12,8 +12,7 @@ protocol CartService: Sendable {
     func updateCart(id: String, nftIDs: [String]) async throws
 }
 
-@MainActor
-final class CartServiceImpl: CartService {
+actor CartServiceImpl: CartService {
     private let networkClient: NetworkClient
     
     init(networkClient: NetworkClient) {

@@ -15,5 +15,5 @@ enum CartSortOption: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 
     static let userDefaultsKey = "cart.sortOption"
-    static let defaultOption = CartSortOption.price
+    static let defaultOption = CartSortOption.name
 }
