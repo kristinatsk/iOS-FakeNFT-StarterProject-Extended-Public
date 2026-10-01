@@ -12,58 +12,45 @@ import SwiftUI
 @Observable
 @MainActor
 final class CartViewModel {
-    private(set) var items: [CartItemCellModel] = []
-    private var hasLoadedCart = false
+    private(set) var items: [CartItemCellModel]
+    private var hasLoadedCart: Bool
     private(set) var isLoading = false
     private(set) var isLoadingItems = false
     private(set) var loadingError: String?
     private(set) var hasLoadingFailures = false
-
-    private let cartService: CartService?
-    private let nftService: NftService?
-
+    private(set) var deletionError: String?
+    private(set) var isDeletingItem = false
+    private(set) var deletionRequestID: String?
+    
+    private let cartID: String
+    private let cartService: CartService
+    private let nftService: NftService
+    
     var isEmpty: Bool { items.isEmpty }
     var totalPrice: Double { items.map(\.price).reduce(0, +) }
-
-    init(items: [CartItemCellModel] = []) {
-        self.items = items
-        self.cartService = nil
-        self.nftService = nil
-    }
-
-    init(cartService: CartService, nftService: NftService) {
-        self.items = []
-        self.cartService = cartService
-        self.nftService = nftService
-    }
-
-    func loadCart(id: String = "1") async {
-        guard let cartService, let nftService else { return }
-        await loadCart(id: id, cartService: cartService, nftService: nftService)
-    }
-
-    func loadCart(
-        id: String = "1",
-        cartService: CartService,
-        nftService: NftService
-    ) async {
-        await loadCart(id: id, cartService: cartService, nftService: nftService, forceReload: false)
-    }
-
-    func reloadCart(
-        id: String = "1",
-        cartService: CartService,
-        nftService: NftService
-    ) async {
-        await loadCart(id: id, cartService: cartService, nftService: nftService, forceReload: true)
-    }
-
-    private func loadCart(
-        id: String,
+    
+    init(
         cartService: CartService,
         nftService: NftService,
-        forceReload: Bool
-    ) async {
+        cartID: String = "1",
+        items: [CartItemCellModel]? = nil
+    ) {
+        self.cartService = cartService
+        self.nftService = nftService
+        self.cartID = cartID
+        self.items = items ?? []
+        self.hasLoadedCart = items != nil
+    }
+    
+    func loadCart() async { await loadCart(forceReload: false) }
+    func reloadCart() async { await loadCart(forceReload: true) }
+    
+    private var savedSortOption: CartSortOption {
+        let rawValue = UserDefaults.standard.string(forKey: CartSortOption.userDefaultsKey)
+        return rawValue.flatMap(CartSortOption.init(rawValue:)) ?? .defaultOption
+    }
+
+    private func loadCart(forceReload: Bool) async {
         guard !isLoading else { return }
         if hasLoadedCart && !forceReload { return }
         isLoading = true
@@ -75,9 +62,9 @@ final class CartViewModel {
             isLoadingItems = false
             isLoading = false
         }
-
+        
         do {
-            let cart = try await cartService.loadCart(id: id)
+            let cart = try await cartService.loadCart(id: cartID)
             items = cart.nfts.map { id in
                 CartItemCellModel(
                     id: id,
@@ -90,41 +77,77 @@ final class CartViewModel {
             }
             isLoading = false
             isLoadingItems = !cart.nfts.isEmpty
-
+            
+            let nftService = self.nftService
             await withTaskGroup(of: Result<Nft, Error>.self) { group in
                 for id in cart.nfts {
                     group.addTask {
-                        do {
-                            return .success(try await nftService.loadNft(id: id))
-                        } catch {
-                            return .failure(error)
-                        }
+                        do { return .success(try await nftService.loadNft(id: id)) }
+                        catch { return .failure(error) }
                     }
                 }
-
+                
                 for await result in group {
                     switch result {
                     case .success(let nft):
                         guard let index = items.firstIndex(where: { $0.id == nft.id }) else { continue }
                         items[index] = makeCellModel(from: nft)
                     case .failure:
+                        hasLoadedCart = false
                         hasLoadingFailures = true
-                        loadingError = NSLocalizedString("Error.network", comment: "")
+                        loadingError = String(localized: "Error.network")
                     }
                 }
             }
             isLoadingItems = false
-
+            sortItems(by: savedSortOption)
+            
         } catch {
             hasLoadingFailures = true
-            loadingError = NSLocalizedString("Error.network", comment: "")
-            isLoadingItems = false
-            isLoading = false
+            loadingError = String(localized: "Error.network")
         }
     }
-
-    // TODO: Add NFT removal from the cart through the order API.
-
+    
+    func removeItem(id: String) async -> Bool {
+        guard let itemIndex = items.firstIndex(where: { $0.id == id }),
+              !isDeletingItem else { return false }
+        
+        let removedItem = items.remove(at: itemIndex)
+        let remainingIDs = items.map(\.id)
+        isDeletingItem = true
+        deletionError = nil
+        deletionRequestID = id
+        defer {
+            isDeletingItem = false
+            deletionRequestID = nil
+        }
+        
+        do {
+            try await cartService.updateCart(id: cartID, nftIDs: remainingIDs)
+            hasLoadedCart = true
+            return true
+        } catch {
+            items.insert(removedItem, at: min(itemIndex, items.count))
+            deletionError = String(localized: "Error.network")
+            return false
+        }
+    }
+    
+    func sortItems(by option: CartSortOption) {
+        switch option {
+        case .price:
+            items.sort { $0.price < $1.price }
+        case .rating:
+            items.sort { $0.rating > $1.rating }
+        case .name:
+            items.sort { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        }
+    }
+    
+    func clearDeletionError() {
+        deletionError = nil
+    }
+    
     private func makeCellModel(from nft: Nft) -> CartItemCellModel {
         CartItemCellModel(
             id: nft.id,
@@ -139,7 +162,11 @@ final class CartViewModel {
 // MARK: - Mocks
 
 extension CartViewModel {
-    static func mock() -> CartViewModel {
-        CartViewModel(items: CartItemCellModel.mocks)
+    static func mock(items: [CartItemCellModel] = CartItemCellModel.mocks) -> CartViewModel {
+        CartViewModel(
+            cartService: MockCartService(),
+            nftService: MockNftService(),
+            items: items
+        )
     }
 }

@@ -71,13 +71,6 @@
             ReferencedContainer = "container:iOS-FakeNFT-Extended.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "API_TOKEN"
-            value = "96431102-6557-458f-8326-522645ee6a2a"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
