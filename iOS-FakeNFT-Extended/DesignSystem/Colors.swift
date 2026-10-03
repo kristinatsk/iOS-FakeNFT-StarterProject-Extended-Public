@@ -58,6 +58,12 @@ extension UIColor {
         ? .yaLightGrayDark
         : .yaLightGrayLight
     }
+    
+    static let inputBackground = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaLightGrayDark
+        : .yaLightGrayLight
+    }
 
     static let closeButton = UIColor { traits in
         return traits.userInterfaceStyle == .dark
