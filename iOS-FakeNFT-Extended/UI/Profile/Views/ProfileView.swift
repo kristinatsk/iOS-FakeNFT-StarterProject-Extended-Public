@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @State private var isShowingEditProfile = false
+    @State private var isShowingSafari = false
     
     var body: some View {
         NavigationStack {
@@ -25,12 +25,17 @@ struct ProfileView: View {
                         .padding(.horizontal)
                     
                     Button(action: {
-                        
+                        isShowingSafari = true
                     }) {
                         Text("Joaquin Phoenix.com")
                     }
                     .font(Font(UIFont.caption1))
                     .padding(.horizontal, 16)
+                    .sheet(isPresented: $isShowingSafari) {
+                        if let url = URL(string: "https://practicum.yandex.ru") {
+                            SafariView(url: url)
+                        }
+                    }
                 }
                 
                 List {
@@ -53,7 +58,7 @@ struct ProfileView: View {
                 }
             }
         }
-
+        
     }
 }
 

@@ -44,6 +44,7 @@
 		ABC5E1EB2C32084F002B4068 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = ABC5E1E92C32084F002B4068 /* Localizable.strings */; };
 		C1A3600530600691000670FA /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A3600430600691000670FA /* ProfileView.swift */; };
 		C1A3600730606B75000670FA /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A3600630606B75000670FA /* EditProfileView.swift */; };
+		C1A5965A30719A6E00B94120 /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A5965930719A6500B94120 /* SafariView.swift */; };
 		C1BA85023065999D0054D122 /* MyNFTView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BA85013065999D0054D122 /* MyNFTView.swift */; };
 		C1BA8504306599AA0054D122 /* FavoriteNFTView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BA8503306599AA0054D122 /* FavoriteNFTView.swift */; };
 		C1BA8506306AEFD20054D122 /* MockNFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BA8505306AEFD20054D122 /* MockNFT.swift */; };
@@ -106,6 +107,7 @@
 		C1A36002305EC772000670FA /* Epic_Profile.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Epic_Profile.md; sourceTree = "<group>"; };
 		C1A3600430600691000670FA /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		C1A3600630606B75000670FA /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
+		C1A5965930719A6500B94120 /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariView.swift; sourceTree = "<group>"; };
 		C1BA85013065999D0054D122 /* MyNFTView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyNFTView.swift; sourceTree = "<group>"; };
 		C1BA8503306599AA0054D122 /* FavoriteNFTView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteNFTView.swift; sourceTree = "<group>"; };
 		C1BA8505306AEFD20054D122 /* MockNFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNFT.swift; sourceTree = "<group>"; };
@@ -339,6 +341,7 @@
 		C1B7AED430645294003050F4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C1A5965930719A6500B94120 /* SafariView.swift */,
 				C1A3600630606B75000670FA /* EditProfileView.swift */,
 				C1A3600430600691000670FA /* ProfileView.swift */,
 				C1BA85013065999D0054D122 /* MyNFTView.swift */,
@@ -515,6 +518,7 @@
 				ABC5E1A42C31F800002B4068 /* NetworkClient.swift in Sources */,
 				C1BA8504306599AA0054D122 /* FavoriteNFTView.swift in Sources */,
 				ABC5E1D32C320438002B4068 /* NftDetailAssembly.swift in Sources */,
+				C1A5965A30719A6E00B94120 /* SafariView.swift in Sources */,
 				ABC5E1A12C31F6D7002B4068 /* Nft.swift in Sources */,
 				ABC5E1AE2C31FB7F002B4068 /* NftByIdRequest.swift in Sources */,
 				ABC5E1DB2C3204CE002B4068 /* UIView+Constraints.swift in Sources */,
