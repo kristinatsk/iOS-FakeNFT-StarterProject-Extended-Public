@@ -1,14 +1,23 @@
 import SwiftUI
 
 struct EditProfileView: View {
-    @State private var name = "Joaquin Phoenix"
-    @State private var description = "Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT, и еще больше — на моём сайте. Открыт к коллаборациям."
-    @State private var website = "Joaquin Phoenix.com"
+    @State private var name: String
+    @State private var description: String
+    @State private var website: String
     @State private var isShowingPhotoMenu = false
     @State private var isShowingPhotoLinkAlert = false
     @State private var isLoading = false
     @State private var isShowingExitAlert = false
     @Environment(\.dismiss) private var dismiss
+    var viewModel: ProfileViewModel
+    
+    init(viewModel: ProfileViewModel) {
+        self.viewModel = viewModel
+        _name = State(initialValue: viewModel.name)
+        _description = State(initialValue: viewModel.description)
+        _website = State(initialValue: viewModel.website)
+        
+    }
     
     var body: some View {
         ZStack {
@@ -98,6 +107,10 @@ struct EditProfileView: View {
                 Spacer()
                 
                 Button("Сохранить") {
+                    viewModel.name = name
+                    viewModel.description = description
+                    viewModel.website = website
+                    
                     dismiss()
                 }
                 .frame(maxWidth: .infinity)
@@ -148,5 +161,5 @@ struct EditProfileView: View {
 }
 
 #Preview {
-    EditProfileView()
+    EditProfileView(viewModel: ProfileViewModel())
 }

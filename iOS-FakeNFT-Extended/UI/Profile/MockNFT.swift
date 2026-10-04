@@ -6,7 +6,7 @@ struct MockNFT: Identifiable {
     let author: String
     let price: String
     let rating: Double
-    let isFavorite: Bool
+    var isFavorite: Bool
     let imageName: String
 }
 
@@ -16,7 +16,7 @@ let mockMyNFTs: [MockNFT] = [
         author: "от John Doe",
         price: "1,78 ETH",
         rating: 3.0,
-        isFavorite: false,
+        isFavorite: true,
         imageName: ""
     ),
     MockNFT(
@@ -24,7 +24,7 @@ let mockMyNFTs: [MockNFT] = [
         author: "от John Doe",
         price: "1,78 ETH",
         rating: 3.0,
-        isFavorite: false,
+        isFavorite: true,
         imageName: ""
     ),
     MockNFT(
@@ -32,7 +32,7 @@ let mockMyNFTs: [MockNFT] = [
         author: "от John Doe",
         price: "1,78 ETH",
         rating: 3.0,
-        isFavorite: false,
+        isFavorite: true,
         imageName: ""
     )
 ]
