@@ -3,6 +3,23 @@ import SwiftUI
 struct MyNFTView: View {
 
     @State private var isShowingSortMenu = false
+    @AppStorage("myNFT.sortOption")
+    private var selectedSortOption = MyNFTSortOption.rating.rawValue
+    private var selectedSortOptionValue: MyNFTSortOption {
+        MyNFTSortOption(rawValue: selectedSortOption) ?? .rating
+    }
+    private var sortedNFTs: [MockNFT] {
+        switch selectedSortOptionValue {
+        case .price:
+            mockMyNFTs.sorted { $0.numericPrice < $1.numericPrice }
+        case .rating:
+            mockMyNFTs.sorted { $0.rating > $1.rating }
+        case .name:
+            mockMyNFTs.sorted {
+                $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+            }
+        }
+    }
     var body: some View {
         if mockMyNFTs.isEmpty {
             VStack {
@@ -17,7 +34,7 @@ struct MyNFTView: View {
             .navigationBarTitleDisplayMode(.inline)
         } else {
             List {
-                ForEach(mockMyNFTs) { item in
+                ForEach(sortedNFTs) { item in
                     HStack(spacing: 16) {
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color.gray.opacity(0.2))
@@ -85,15 +102,15 @@ struct MyNFTView: View {
                 "Сортировка",
                 isPresented: $isShowingSortMenu) {
                     Button("По цене") {
-                        
+                        selectedSortOption = MyNFTSortOption.price.rawValue
                     }
                     
                     Button("По рейтингу") {
-                        
+                        selectedSortOption = MyNFTSortOption.rating.rawValue
                     }
                     
                     Button("По названию") {
-                        
+                        selectedSortOption = MyNFTSortOption.name.rawValue
                     }
                     
                     Button("Закрыть", role: .cancel) {
