@@ -10,13 +10,18 @@ import SwiftUI
 
 struct CartView: View {
     @State private var viewModel: CartViewModel
-
-    @Environment(ServicesAssembly.self) private var servicesAssembly
-    private let loadsRemoteCart: Bool
+    @State private var itemPendingDeletion: CartItemCellModel?
+    @State private var showSortDialog = false
     
-    init(viewModel: CartViewModel? = nil) {
-        _viewModel = State(initialValue: viewModel ?? CartViewModel())
-        loadsRemoteCart = viewModel == nil
+    @AppStorage(CartSortOption.userDefaultsKey)
+    private var selectedSortOption = CartSortOption.defaultOption.rawValue
+
+    private var selectedSortOptionValue: CartSortOption {
+        CartSortOption(rawValue: selectedSortOption) ?? .defaultOption
+    }
+
+    init(viewModel: CartViewModel) {
+        _viewModel = State(initialValue: viewModel)
     }
     
     var body: some View {
@@ -30,13 +35,9 @@ struct CartView: View {
                         .font(.caption1)
                         .foregroundStyle(Color.cartTextPrimary)
                         .multilineTextAlignment(.center)
-                    Button(NSLocalizedString("Error.repeat", comment: "")) {
+                    Button("Error.repeat") {
                         Task {
-                            await viewModel.reloadCart(
-                                id: "1",
-                                cartService: servicesAssembly.cartService,
-                                nftService: servicesAssembly.nftService
-                            )
+                            await viewModel.reloadCart()
                         }
                     }
                     .font(.bodyBold)
@@ -56,7 +57,9 @@ struct CartView: View {
                         LazyVStack(spacing: 0) {
                             ForEach(Array(viewModel.items.enumerated()), id: \.element.id) { index, item in
                                 VStack(spacing: 0) {
-                                    CartItemCellView(model: item)
+                                    CartItemCellView(model: item) { item in
+                                        itemPendingDeletion = item
+                                    }
                                     if index < viewModel.items.count - 1 {
                                         Color.cartSeparator.frame(height: 0.5)
                                     }
@@ -77,51 +80,119 @@ struct CartView: View {
             
             
         }
+        .toolbar(itemPendingDeletion == nil ? .visible : .hidden, for: .tabBar)
         .background(Color.cartBackground.ignoresSafeArea())
+        .overlay {
+            if let itemPendingDeletion {
+                deleteConfirmationOverlay(for: itemPendingDeletion)
+                    .transition(.opacity)
+                    .zIndex(1)
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: itemPendingDeletion?.id)
+        .animation(.none, value: viewModel.items.map(\.id))
         .onChange(of: viewModel.isLoadingItems) { _, isLoadingItems in
             if isLoadingItems {
                 ProgressHUD.animate(nil, interaction: false)
-            } else if !viewModel.hasLoadingFailures {
-                ProgressHUD.dismiss()
+            } else if viewModel.hasLoadingFailures {
+                ProgressHUD.failed(String(localized: "Error.network"), interaction: false, delay: 2)
             } else {
-                ProgressHUD.failed(NSLocalizedString("Error.network", comment: ""), interaction: false, delay: 2)
+                ProgressHUD.dismiss()
             }
         }
         .onChange(of: viewModel.hasLoadingFailures) { _, hasFailures in
             guard hasFailures, !viewModel.isLoadingItems else { return }
-            ProgressHUD.failed(NSLocalizedString("Error.network", comment: ""), interaction: false, delay: 2)
+            ProgressHUD.failed(String(localized: "Error.network"), interaction: false, delay: 2)
         }
         .task {
-            guard loadsRemoteCart else { return }
-            await viewModel.loadCart(
-                id: "1",
-                cartService: servicesAssembly.cartService,
-                nftService: servicesAssembly.nftService
-            )
+            await viewModel.loadCart()
+            viewModel.sortItems(by: selectedSortOptionValue)
         }
     }
     
+    private func deleteConfirmationOverlay(for item: CartItemCellModel) -> some View {
+        GeometryReader { geometry in
+            ZStack {
+                Rectangle()
+                    .fill(Color.white.opacity(13.0 / 255.0))
+                    .background(.ultraThinMaterial)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        itemPendingDeletion = nil
+                    }
+                    .accessibilityHidden(true)
+
+                CartDeleteConfirmationView(
+                    item: item,
+                    onDelete: {
+                        Task {
+                            let deleted = await viewModel.removeItem(id: item.id)
+                            if deleted {
+                                itemPendingDeletion = nil
+                            } else if let message = viewModel.deletionError {
+                                ProgressHUD.failed(message, interaction: false, delay: 2)
+                                viewModel.clearDeletionError()
+                            }
+                        }
+                    },
+                    onCancel: {
+                        itemPendingDeletion = nil
+                    },
+                    isDeleting: viewModel.deletionRequestID == item.id
+                )
+                .frame(width: geometry.size.width, height: geometry.size.height)
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+        }
+        .ignoresSafeArea()
+    }
+
     private var sortButton: some View {
         Button {
-            
+            showSortDialog = true
         } label: {
             Image(.sort)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 21, height: 13)
         }
+        .confirmationDialog(
+            "Cart.sort",
+            isPresented: $showSortDialog,
+            titleVisibility: .visible
+        ) {
+            sortDialog
+        }
         .buttonStyle(.plain)
-        .accessibilityLabel(NSLocalizedString("Accessibility.cart.sort", comment: ""))
+        .accessibilityLabel("Accessibility.cart.sort")
+    }
+    
+    @ViewBuilder
+    private var sortDialog: some View {
+        Button("Cart.sort.price") {
+            selectedSortOption = CartSortOption.price.rawValue
+            viewModel.sortItems(by: selectedSortOptionValue)
+        }
+        
+        Button("Cart.sort.rating") {
+            selectedSortOption = CartSortOption.rating.rawValue
+            viewModel.sortItems(by: selectedSortOptionValue)
+        }
+        
+        Button("Cart.sort.name") {
+            selectedSortOption = CartSortOption.name.rawValue
+            viewModel.sortItems(by: selectedSortOptionValue)
+        }
+        
+        Button("Common.cancel", role: .cancel) { }
     }
 }
 
 #Preview("С товарами") {
-    CartView(viewModel: CartViewModel.mock())
+    CartView(viewModel: .mock())
         .environment(\.nftImageResolver) { AnyView(MockNFTImage(url: $0)) }
-        .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))
 }
 
 #Preview("Пустая") {
-    CartView(viewModel: CartViewModel())
-        .environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))
+    CartView(viewModel: .mock(items: []))
 }
