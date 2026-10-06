@@ -62,6 +62,11 @@
 		DE303BED307281D000C48FC0 /* UserCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE303BEC307281CE00C48FC0 /* UserCardViewModel.swift */; };
 		DE303BEF307281E200C48FC0 /* UserCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE303BEE307281E100C48FC0 /* UserCardView.swift */; };
 		DE303BF33072825C00C48FC0 /* UserCardModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE303BF23072825B00C48FC0 /* UserCardModule.swift */; };
+		DE8C064830758BBD00B21D53 /* UserCollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8C064730758BBA00B21D53 /* UserCollectionItem.swift */; };
+		DE8C064A30758BCF00B21D53 /* UserCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8C064930758BCE00B21D53 /* UserCollectionViewModel.swift */; };
+		DE8C064C30758BE600B21D53 /* UserCollectionNFTCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8C064B30758BE400B21D53 /* UserCollectionNFTCell.swift */; };
+		DE8C064E30758BF900B21D53 /* UserCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8C064D30758BF500B21D53 /* UserCollectionView.swift */; };
+		DE8C065030758C1700B21D53 /* UserCollectionModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8C064F30758C1200B21D53 /* UserCollectionModule.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -139,6 +144,11 @@
 		DE303BEC307281CE00C48FC0 /* UserCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCardViewModel.swift; sourceTree = "<group>"; };
 		DE303BEE307281E100C48FC0 /* UserCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCardView.swift; sourceTree = "<group>"; };
 		DE303BF23072825B00C48FC0 /* UserCardModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCardModule.swift; sourceTree = "<group>"; };
+		DE8C064730758BBA00B21D53 /* UserCollectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCollectionItem.swift; sourceTree = "<group>"; };
+		DE8C064930758BCE00B21D53 /* UserCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCollectionViewModel.swift; sourceTree = "<group>"; };
+		DE8C064B30758BE400B21D53 /* UserCollectionNFTCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCollectionNFTCell.swift; sourceTree = "<group>"; };
+		DE8C064D30758BF500B21D53 /* UserCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCollectionView.swift; sourceTree = "<group>"; };
+		DE8C064F30758C1200B21D53 /* UserCollectionModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCollectionModule.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -373,6 +383,7 @@
 			isa = PBXGroup;
 			children = (
 				DE17E5C43067E4DD0035047E /* UsersRequest.swift */,
+				DE8C064F30758C1200B21D53 /* UserCollectionModule.swift */,
 				DE17E5C13067E3910035047E /* StatisticsUsersSorter.swift */,
 				DE17E5BC3067E2D10035047E /* StatisticsUsersMapper.swift */,
 				DE17E5B73067E2580035047E /* StatisticsSortOptionStorage.swift */,
@@ -387,7 +398,11 @@
 			children = (
 				DE303BF23072825B00C48FC0 /* UserCardModule.swift */,
 				DE303BEE307281E100C48FC0 /* UserCardView.swift */,
+				DE8C064730758BBA00B21D53 /* UserCollectionItem.swift */,
+				DE8C064930758BCE00B21D53 /* UserCollectionViewModel.swift */,
+				DE8C064B30758BE400B21D53 /* UserCollectionNFTCell.swift */,
 				DE303BEC307281CE00C48FC0 /* UserCardViewModel.swift */,
+				DE8C064D30758BF500B21D53 /* UserCollectionView.swift */,
 				DE303BE43072817300C48FC0 /* UserDetailDTO.swift */,
 				DE303BE23072815500C48FC0 /* UserCardModel.swift */,
 				DE17E5BA3067E2A40035047E /* StatisticsUserDomain.swift */,
@@ -562,22 +577,26 @@
 				ABC5E1B72C31FC70002B4068 /* ServicesAssembly.swift in Sources */,
 				DE17E5B53067E21A0035047E /* StatisticsUserRow.swift in Sources */,
 				DE17E5BB3067E2A90035047E /* StatisticsUserDomain.swift in Sources */,
+				DE8C064C30758BE600B21D53 /* UserCollectionNFTCell.swift in Sources */,
 				DE17E5C93067E7FD0035047E /* UsersRequest.swift in Sources */,
 				ABC5E19D2C31F6A6002B4068 /* NftStorage.swift in Sources */,
 				ABC5E1E82C320610002B4068 /* NftDetailBridgeView.swift in Sources */,
 				DE303BEB307281BB00C48FC0 /* UserService.swift in Sources */,
+				DE8C064E30758BF900B21D53 /* UserCollectionView.swift in Sources */,
 				ABC5E1E62C320585002B4068 /* LinePageControl.swift in Sources */,
 				ABC5E1DD2C3204DC002B4068 /* CellsReusingUtils.swift in Sources */,
 				ABC5E1B52C31FC57002B4068 /* TabBarView.swift in Sources */,
 				DE17E5AF3067E1290035047E /* StatisticsViewModel.swift in Sources */,
 				ABC5E1E42C32055B002B4068 /* ErrorView.swift in Sources */,
 				ABC5E1A62C31F815002B4068 /* NetworkRequest.swift in Sources */,
+				DE8C064830758BBD00B21D53 /* UserCollectionItem.swift in Sources */,
 				ABC5E1D52C320446002B4068 /* NftDetailInput.swift in Sources */,
 				DE303BE9307281A300C48FC0 /* UserServiceProtocol.swift in Sources */,
 				DE17E5C73067E7CC0035047E /* StatisticsSortOptionStorage.swift in Sources */,
 				ABC5E16E2C31F5AF002B4068 /* ContentView.swift in Sources */,
 				ABC5E1B92C31FD51002B4068 /* TestCatalogView.swift in Sources */,
 				DE303BEF307281E200C48FC0 /* UserCardView.swift in Sources */,
+				DE8C064A30758BCF00B21D53 /* UserCollectionViewModel.swift in Sources */,
 				ABC5E1DF2C3204FB002B4068 /* LoadingView.swift in Sources */,
 				ABC5E1972C31F656002B4068 /* Colors.swift in Sources */,
 				ABC5E1A42C31F800002B4068 /* NetworkClient.swift in Sources */,
@@ -591,6 +610,7 @@
 				DE17E5C83067E7D30035047E /* StatisticsUsersMapper.swift in Sources */,
 				ABC5E1DB2C3204CE002B4068 /* UIView+Constraints.swift in Sources */,
 				ABC5E16C2C31F5AF002B4068 /* iOS_FakeNFT_ExtendedApp.swift in Sources */,
+				DE8C065030758C1700B21D53 /* UserCollectionModule.swift in Sources */,
 				ABC5E1CB2C3203FC002B4068 /* NftDetailCellModel.swift in Sources */,
 				ABC5E1AB2C31FACD002B4068 /* NftService.swift in Sources */,
 				ABC5E1B22C31FBD4002B4068 /* ExampleRequest.swift in Sources */,

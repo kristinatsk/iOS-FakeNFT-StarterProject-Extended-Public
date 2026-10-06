@@ -10,8 +10,6 @@ import SwiftUI
 struct UserCardView: View {
     @StateObject private var viewModel: UserCardViewModel
 
-    @Environment(\.dismiss) private var dismiss
-
     let userId: String
 
     init(
@@ -19,7 +17,9 @@ struct UserCardView: View {
         viewModel: UserCardViewModel
     ) {
         self.userId = userId
-        _viewModel = StateObject(wrappedValue: viewModel)
+        _viewModel = StateObject(
+            wrappedValue: viewModel
+        )
     }
 
     var body: some View {
@@ -56,11 +56,20 @@ struct UserCardView: View {
         }
     }
 
-    private func content(_ model: UserCardModel) -> some View {
+    private func content(
+        _ model: UserCardModel
+    ) -> some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(
+                alignment: .leading,
+                spacing: 16
+            ) {
                 HStack(spacing: 16) {
-                    AsyncImage(url: URL(string: model.avatarURLString)) { phase in
+                    AsyncImage(
+                        url: URL(
+                            string: model.avatarURLString
+                        )
+                    ) { phase in
                         switch phase {
                         case .success(let image):
                             image
@@ -73,11 +82,19 @@ struct UserCardView: View {
                                 .scaledToFill()
                         }
                     }
-                    .frame(width: 70, height: 70)
+                    .frame(
+                        width: 70,
+                        height: 70
+                    )
                     .clipShape(Circle())
 
                     Text(model.name)
-                        .font(.system(size: 22, weight: .semibold))
+                        .font(
+                            .system(
+                                size: 22,
+                                weight: .semibold
+                            )
+                        )
                         .lineLimit(1)
 
                     Spacer()
@@ -85,7 +102,10 @@ struct UserCardView: View {
 
                 Text(model.description)
                     .font(.system(size: 15))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(
+                        maxWidth: .infinity,
+                        alignment: .leading
+                    )
 
                 Button {
                     guard let url = viewModel.websiteTapped() else {
@@ -95,27 +115,48 @@ struct UserCardView: View {
                     UIApplication.shared.open(url)
                 } label: {
                     Text("Перейти на сайт пользователя")
-                        .font(.system(size: 15, weight: .medium))
+                        .font(
+                            .system(
+                                size: 15,
+                                weight: .medium
+                            )
+                        )
                         .foregroundStyle(.primary)
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
                         .overlay {
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(.primary, lineWidth: 1)
+                            RoundedRectangle(
+                                cornerRadius: 20
+                            )
+                            .stroke(
+                                .primary,
+                                lineWidth: 1
+                            )
                         }
                 }
 
                 NavigationLink {
-                    Text("Коллекция NFT")
+                    UserCollectionModule.make(
+                        userId: userId
+                    )
                 } label: {
                     HStack {
-                        Text("Коллекция NFT (\(model.nftCount))")
-                            .font(.system(size: 17, weight: .semibold))
+                        Text(
+                            "Коллекция NFT (\(model.nftCount))"
+                        )
+                        .font(
+                            .system(
+                                size: 17,
+                                weight: .semibold
+                            )
+                        )
 
                         Spacer()
 
-                        Image(systemName: "chevron.right")
-                            .foregroundStyle(.tertiary)
+                        Image(
+                            systemName: "chevron.right"
+                        )
+                        .foregroundStyle(.tertiary)
                     }
                     .frame(height: 54)
                 }
