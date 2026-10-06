@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class UserService: UserServiceProtocol {
+actor UserService: UserServiceProtocol {
     private let client: NetworkClient
 
     init(client: NetworkClient = DefaultNetworkClient()) {

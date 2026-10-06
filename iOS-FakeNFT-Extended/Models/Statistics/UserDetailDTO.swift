@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserDetailDTO: Decodable {
+struct UserDetailDTO: Decodable, Sendable {
     let id: String
     let name: String
     let avatar: String

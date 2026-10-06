@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct StatisticsUserDTO: Decodable {
+struct StatisticsUserDTO: Decodable, Sendable {
     let id: String
     let name: String
     let avatar: String
