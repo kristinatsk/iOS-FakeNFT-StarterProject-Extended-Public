@@ -17,6 +17,7 @@ struct CartView: View {
     @State private var itemPendingDeletion: CartItemCellModel?
     @State private var showSortDialog = false
     @State private var navigationPath = NavigationPath()
+    private let currenciesService: CurrenciesService
     
     @AppStorage(CartSortOption.userDefaultsKey)
     private var selectedSortOption = CartSortOption.defaultOption.rawValue
@@ -25,8 +26,9 @@ struct CartView: View {
         CartSortOption(rawValue: selectedSortOption) ?? .defaultOption
     }
 
-    init(viewModel: CartViewModel) {
+    init(viewModel: CartViewModel, currenciesService: CurrenciesService) {
         _viewModel = State(initialValue: viewModel)
+        self.currenciesService = currenciesService
     }
     
     var body: some View {
@@ -88,7 +90,7 @@ struct CartView: View {
             .navigationDestination(for: PaymentDestination.self) { destination in
                 switch destination {
                 case .method:
-                    PaymentMethodView(currencies: [Currency]())
+                    PaymentMethodView(currenciesService: currenciesService)
                 }
             }
             .background(Color.cartBackground.ignoresSafeArea())
@@ -200,10 +202,10 @@ struct CartView: View {
 }
 
 #Preview("С товарами") {
-    CartView(viewModel: .mock())
+    CartView(viewModel: .mock(), currenciesService: MockCurrenciesService())
         .environment(\.nftImageResolver) { AnyView(MockNFTImage(url: $0)) }
 }
 
 #Preview("Пустая") {
-    CartView(viewModel: .mock(items: []))
+    CartView(viewModel: .mock(items: []), currenciesService: MockCurrenciesService())
 }

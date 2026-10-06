@@ -6,59 +6,24 @@
 //
 
 import Foundation
+import ProgressHUD
 import SwiftUI
 
-struct CryptoCurrencyCell: View {
-    let currency: Currency
-    let isSelected: Bool
-    let onSelect: () -> Void
-
-    var body: some View {
-        Button(action: onSelect) {
-            HStack(spacing: 8) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(currency.title)
-                        .font(.caption2)
-                        .foregroundStyle(Color.cartTextPrimary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-
-                    Text(currency.name)
-                        .font(.caption2)
-                        .foregroundStyle(Color.cartAccentGreen)
-                }
-            }
-            .frame(maxWidth: .infinity, minHeight: 46, alignment: .leading)
-            .padding(.horizontal, 12)
-            .background(Color.cartSeparator)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay {
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(
-                        isSelected ? Color.cartTextPrimary : .clear,
-                        lineWidth: 1
-                    )
-            }
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(String(localized: "Payment.currency.accessibility \(currency.title), \(currency.name)"))
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
-    }
-}
-
-
 struct PaymentMethodView: View {
-    private let currencies: [Currency]
+    private let currenciesService: CurrenciesService
     private let onPay: (Currency) -> Void
     @Environment(\.dismiss) private var dismiss
     @State private var selectedCurrencyID: String?
+    @State private var currencies: [Currency] = []
+    @State private var isShowingAgreement = false
+    @State private var loadingError: String?
+    @State private var isLoading = false
 
     init(
-        currencies: [Currency],
+        currenciesService: CurrenciesService,
         onPay: @escaping (Currency) -> Void = { _ in }
     ) {
-        self.currencies = currencies
+        self.currenciesService = currenciesService
         self.onPay = onPay
     }
 
@@ -68,46 +33,51 @@ struct PaymentMethodView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundStyle(Color.cartTextPrimary)
-                }
-                .accessibilityLabel("Payment.back")
-
-                Spacer()
-
-                Text("Payment.title")
-                    .font(.bodyBold)
-                    .foregroundStyle(Color.cartTextPrimary)
-
-                Spacer()
-
-                Color.clear
-                    .frame(width: 20, height: 20)
+            PaymentMethodHeaderView {
+                dismiss()
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 8)
 
-            ScrollView {
-                LazyVGrid(
-                    columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)],
-                    spacing: 10
-                ) {
-                    ForEach(currencies) { currency in
-                        CryptoCurrencyCell(
-                            currency: currency,
-                            isSelected: selectedCurrencyID == currency.id
+            Group {
+                if isLoading && currencies.isEmpty {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let loadingError, currencies.isEmpty {
+                    VStack(spacing: 12) {
+                        Text(loadingError)
+                            .font(.caption1)
+                            .foregroundStyle(Color.cartTextPrimary)
+                            .multilineTextAlignment(.center)
+
+                        Button("Error.repeat") {
+                            Task { await loadCurrencies() }
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    ScrollView {
+                        LazyVGrid(
+                            columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)],
+                            spacing: 10
                         ) {
-                            selectedCurrencyID = currency.id
+                            ForEach(currencies) { currency in
+                                CryptoCurrencyCell(
+                                    currency: currency,
+                                    isSelected: selectedCurrencyID == currency.id
+                                ) {
+                                    selectedCurrencyID = currency.id
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 36)
+                    }
+                    // Повторная загрузка не должна подменять уже загруженный контент
+                    .overlay {
+                        if isLoading {
+                            ProgressView()
                         }
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 36)
             }
 
             VStack(alignment: .leading, spacing: 28) {
@@ -116,7 +86,9 @@ struct PaymentMethodView: View {
                         .font(.caption2)
                         .foregroundStyle(Color.cartTextPrimary)
 
-                    Button(action: {}) {
+                    Button {
+                        isShowingAgreement = true
+                    } label: {
                         Text("Payment.agreement.link")
                             .font(.caption2)
                             .foregroundStyle(.blue)
@@ -148,15 +120,40 @@ struct PaymentMethodView: View {
         .background(Color.cartBackground.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $isShowingAgreement) {
+            UserAgreementView()
+        }
+        .task {
+            await loadCurrencies()
+        }
+    }
+
+    private func loadCurrencies() async {
+        guard !isLoading else { return }
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            currencies = try await currenciesService.loadCurrencies()
+            loadingError = nil
+            ProgressHUD.dismiss()
+        } catch {
+            let message = String(localized: "Error.network")
+            if currencies.isEmpty {
+                // Первый запуск: показываем экран ошибки с кнопкой повтора
+                loadingError = message
+            } else {
+                // Данные уже на экране: не блокируем список, а сообщаем о проблеме
+                loadingError = nil
+                ProgressHUD.failed(message, interaction: false, delay: 2)
+            }
+        }
     }
 }
 
 #Preview {
     NavigationStack {
-        PaymentMethodView(currencies: [
-            Currency(id: "1", title: "Bitcoin", name: "BTC", image: URL(string: "https://example.com/bitcoin.png")!),
-            Currency(id: "2", title: "Ethereum", name: "ETH", image: URL(string: "https://example.com/ethereum.png")!),
-            Currency(id: "3", title: "Tether", name: "USDT", image: URL(string: "https://example.com/tether.png")!)
-        ])
+        PaymentMethodView(currenciesService: MockCurrenciesService())
+            .environment(\.nftImageResolver) { AnyView(MockNFTImage(url: $0)) }
     }
 }
