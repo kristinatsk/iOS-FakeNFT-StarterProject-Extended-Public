@@ -1,13 +1,13 @@
 //
-//  StatisticsUserDTO.swift
+//  UserDetailDTO.swift
 //  iOS-FakeNFT-Extended
 //
-//  Created by Андрей Урсан on 26.09.2026.
+//  Created by Андрей Урсан on 04.10.2026.
 //
 
 import Foundation
 
-struct StatisticsUserDTO: Decodable, Sendable {
+struct UserDetailDTO: Decodable, Sendable {
     let id: String
     let name: String
     let avatar: String
