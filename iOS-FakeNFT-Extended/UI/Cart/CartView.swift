@@ -9,9 +9,14 @@ import ProgressHUD
 import SwiftUI
 
 struct CartView: View {
+    private enum PaymentDestination: Hashable {
+        case method
+    }
+
     @State private var viewModel: CartViewModel
     @State private var itemPendingDeletion: CartItemCellModel?
     @State private var showSortDialog = false
+    @State private var navigationPath = NavigationPath()
     
     @AppStorage(CartSortOption.userDefaultsKey)
     private var selectedSortOption = CartSortOption.defaultOption.rawValue
@@ -25,88 +30,94 @@ struct CartView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            if viewModel.isLoading && viewModel.items.isEmpty {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let errorMessage = viewModel.loadingError, viewModel.items.isEmpty {
-                VStack(spacing: 12) {
-                    Text(errorMessage)
-                        .font(.caption1)
-                        .foregroundStyle(Color.cartTextPrimary)
-                        .multilineTextAlignment(.center)
-                    Button("Error.repeat") {
-                        Task {
-                            await viewModel.reloadCart()
+        NavigationStack(path: $navigationPath) {
+            VStack(spacing: 0) {
+                if viewModel.isLoading && viewModel.items.isEmpty {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let errorMessage = viewModel.loadingError, viewModel.items.isEmpty {
+                    VStack(spacing: 12) {
+                        Text(errorMessage)
+                            .font(.caption1)
+                            .foregroundStyle(Color.cartTextPrimary)
+                            .multilineTextAlignment(.center)
+                        Button("Error.repeat") {
+                            Task {
+                                await viewModel.reloadCart()
+                            }
                         }
+                        .font(.bodyBold)
                     }
-                    .font(.bodyBold)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if viewModel.isEmpty && viewModel.loadingError == nil {
-                CartEmptyView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                VStack(spacing: 0) {
-                    HStack(spacing: 0) {
-                        Spacer()
-                        sortButton
-                    }
-                    .padding(15)
-                    ScrollView {
-                        LazyVStack(spacing: 0) {
-                            ForEach(Array(viewModel.items.enumerated()), id: \.element.id) { index, item in
-                                VStack(spacing: 0) {
-                                    CartItemCellView(model: item) { item in
-                                        itemPendingDeletion = item
-                                    }
-                                    if index < viewModel.items.count - 1 {
-                                        Color.cartSeparator.frame(height: 0.5)
+                } else if viewModel.isEmpty && viewModel.loadingError == nil {
+                    CartEmptyView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    VStack(spacing: 0) {
+                        HStack(spacing: 0) {
+                            Spacer()
+                            sortButton
+                        }
+                        .padding(15)
+                        ScrollView {
+                            LazyVStack(spacing: 0) {
+                                ForEach(Array(viewModel.items.enumerated()), id: \.element.id) { index, item in
+                                    VStack(spacing: 0) {
+                                        CartItemCellView(model: item) { item in
+                                            itemPendingDeletion = item
+                                        }
+                                        if index < viewModel.items.count - 1 {
+                                            Color.cartSeparator.frame(height: 0.5)
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+
+                    CartTotalView(model: CartTotalViewModel(
+                        count: viewModel.items.count,
+                        totalPrice: viewModel.totalPrice,
+                        onPay: {
+                            navigationPath.append(PaymentDestination.method)
+                        }
+                    ))
                 }
-                
-                CartTotalView(model: CartTotalViewModel(
-                    count: viewModel.items.count,
-                    totalPrice: viewModel.totalPrice,
-                    onPay: {
-                        // TODO: в задаче 3 модуля добавить логику оплаты
-                    }
-                ))
             }
-            
-            
-        }
-        .toolbar(itemPendingDeletion == nil ? .visible : .hidden, for: .tabBar)
-        .background(Color.cartBackground.ignoresSafeArea())
-        .overlay {
-            if let itemPendingDeletion {
-                deleteConfirmationOverlay(for: itemPendingDeletion)
-                    .transition(.opacity)
-                    .zIndex(1)
+            .toolbar(itemPendingDeletion == nil ? .visible : .hidden, for: .tabBar)
+            .navigationDestination(for: PaymentDestination.self) { destination in
+                switch destination {
+                case .method:
+                    PaymentMethodView(currencies: [Currency]())
+                }
             }
-        }
-        .animation(.easeInOut(duration: 0.2), value: itemPendingDeletion?.id)
-        .animation(.none, value: viewModel.items.map(\.id))
-        .onChange(of: viewModel.isLoadingItems) { _, isLoadingItems in
-            if isLoadingItems {
-                ProgressHUD.animate(nil, interaction: false)
-            } else if viewModel.hasLoadingFailures {
+            .background(Color.cartBackground.ignoresSafeArea())
+            .overlay {
+                if let itemPendingDeletion {
+                    deleteConfirmationOverlay(for: itemPendingDeletion)
+                        .transition(.opacity)
+                        .zIndex(1)
+                }
+            }
+            .animation(.easeInOut(duration: 0.2), value: itemPendingDeletion?.id)
+            .animation(.none, value: viewModel.items.map(\.id))
+            .onChange(of: viewModel.isLoadingItems) { _, isLoadingItems in
+                if isLoadingItems {
+                    ProgressHUD.animate(nil, interaction: false)
+                } else if viewModel.hasLoadingFailures {
+                    ProgressHUD.failed(String(localized: "Error.network"), interaction: false, delay: 2)
+                } else {
+                    ProgressHUD.dismiss()
+                }
+            }
+            .onChange(of: viewModel.hasLoadingFailures) { _, hasFailures in
+                guard hasFailures, !viewModel.isLoadingItems else { return }
                 ProgressHUD.failed(String(localized: "Error.network"), interaction: false, delay: 2)
-            } else {
-                ProgressHUD.dismiss()
             }
-        }
-        .onChange(of: viewModel.hasLoadingFailures) { _, hasFailures in
-            guard hasFailures, !viewModel.isLoadingItems else { return }
-            ProgressHUD.failed(String(localized: "Error.network"), interaction: false, delay: 2)
-        }
-        .task {
-            await viewModel.loadCart()
-            viewModel.sortItems(by: selectedSortOptionValue)
+            .task {
+                await viewModel.loadCart()
+                viewModel.sortItems(by: selectedSortOptionValue)
+            }
         }
     }
     
