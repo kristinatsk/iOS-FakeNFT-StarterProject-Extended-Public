@@ -65,7 +65,8 @@ final class UserCollectionViewModel: ObservableObject {
                 isLoading = false
             } catch {
                 isLoading = false
-                errorMessage = "Не удалось загрузить коллекцию NFT"
+                errorMessage =
+                    "Не удалось загрузить коллекцию NFT"
             }
         }
     }

@@ -10,6 +10,9 @@ import SwiftUI
 struct UserCollectionView: View {
     @StateObject private var viewModel: UserCollectionViewModel
 
+    @Environment(\.dismiss)
+    private var dismiss
+
     init(viewModel: UserCollectionViewModel) {
         _viewModel = StateObject(
             wrappedValue: viewModel
@@ -26,6 +29,15 @@ struct UserCollectionView: View {
         }
         .navigationTitle("Коллекция NFT")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(
+                placement: .navigationBarLeading
+            ) {
+                Button("Назад") {
+                    dismiss()
+                }
+            }
+        }
         .onAppear {
             viewModel.load()
         }

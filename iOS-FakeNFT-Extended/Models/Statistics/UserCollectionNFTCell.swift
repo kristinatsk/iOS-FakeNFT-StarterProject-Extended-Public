@@ -19,14 +19,14 @@ struct UserCollectionNftCell: View {
                         .resizable()
                         .scaledToFill()
 
-                default:
-                    ZStack {
-                        Color.gray.opacity(0.15)
+                case .failure:
+                    placeholder
 
-                        Image(systemName: "photo")
-                            .font(.system(size: 28))
-                            .foregroundStyle(.secondary)
-                    }
+                case .empty:
+                    ProgressView()
+
+                @unknown default:
+                    placeholder
                 }
             }
             .frame(maxWidth: .infinity)
@@ -55,14 +55,26 @@ struct UserCollectionNftCell: View {
 
                 Spacer()
 
-                Button {
-                    // Покупка не входит в Module 3.
-                } label: {
-                    Image(systemName: "cart")
-                        .font(.system(size: 15))
+                Button("Купить") {
+                    // Логика покупки не входит в Module 3.
                 }
-                .buttonStyle(.plain)
+                .font(
+                    .system(
+                        size: 14,
+                        weight: .semibold
+                    )
+                )
             }
+        }
+    }
+
+    private var placeholder: some View {
+        ZStack {
+            Color.gray.opacity(0.15)
+
+            Image(systemName: "photo")
+                .font(.system(size: 28))
+                .foregroundStyle(.secondary)
         }
     }
 }

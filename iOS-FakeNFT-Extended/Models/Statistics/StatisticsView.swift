@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct StatisticsView: View {
-    
+
     @StateObject private var viewModel: StatisticsViewModel
     @State private var isSortSheetPresented = false
-    
+
     init(viewModel: StatisticsViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
-    
+
     var body: some View {
         NavigationStack {
             Group {
@@ -27,7 +27,9 @@ struct StatisticsView: View {
             }
             .navigationTitle("Статистика")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(
+                    placement: .navigationBarTrailing
+                ) {
                     Button {
                         isSortSheetPresented = true
                     } label: {
@@ -35,15 +37,25 @@ struct StatisticsView: View {
                     }
                 }
             }
-            .sheet(isPresented: $isSortSheetPresented) {
+            .sheet(
+                isPresented: $isSortSheetPresented
+            ) {
                 sortSheet
-                    .presentationDetents([.height(180)])
+                    .presentationDetents(
+                        [.height(180)]
+                    )
             }
             .alert(
                 "Ошибка",
                 isPresented: Binding(
-                    get: { viewModel.errorMessage != nil },
-                    set: { if !$0 { viewModel.errorMessage = nil } }
+                    get: {
+                        viewModel.errorMessage != nil
+                    },
+                    set: { isPresented in
+                        if !isPresented {
+                            viewModel.errorMessage = nil
+                        }
+                    }
                 )
             ) {
                 Button("ОК") {
@@ -57,18 +69,24 @@ struct StatisticsView: View {
             }
         }
     }
-    
+
     private var userList: some View {
         List {
             ForEach(
                 Array(viewModel.users.enumerated()),
                 id: \.element.id
             ) { index, user in
-                
-                StatisticsUserRow(
-                    place: index + 1,
-                    user: user
-                )
+
+                NavigationLink {
+                    UserCardModule.make(
+                        userId: user.id
+                    )
+                } label: {
+                    StatisticsUserRow(
+                        place: index + 1,
+                        user: user
+                    )
+                }
                 .listRowInsets(
                     EdgeInsets(
                         top: 4,
@@ -83,23 +101,23 @@ struct StatisticsView: View {
         }
         .listStyle(.plain)
     }
-    
+
     private var sortSheet: some View {
         VStack(spacing: 0) {
             Text("Сортировка")
                 .font(.headline)
                 .padding(.top, 20)
                 .padding(.bottom, 16)
-            
+
             Button {
                 viewModel.sort(by: .name)
                 isSortSheetPresented = false
             } label: {
                 HStack {
                     Text("По имени")
-                    
+
                     Spacer()
-                    
+
                     if viewModel.sortOption == .name {
                         Image(systemName: "checkmark")
                     }
@@ -107,16 +125,16 @@ struct StatisticsView: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
             }
-            
+
             Button {
                 viewModel.sort(by: .rating)
                 isSortSheetPresented = false
             } label: {
                 HStack {
                     Text("По рейтингу")
-                    
+
                     Spacer()
-                    
+
                     if viewModel.sortOption == .rating {
                         Image(systemName: "checkmark")
                     }
