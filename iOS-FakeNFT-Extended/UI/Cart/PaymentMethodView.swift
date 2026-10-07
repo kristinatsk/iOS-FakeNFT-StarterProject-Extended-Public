@@ -10,8 +10,11 @@ import ProgressHUD
 import SwiftUI
 
 struct PaymentMethodView: View {
+    @State private var viewModel: PaymentViewModel
+
     private let currenciesService: CurrenciesService
-    private let onPay: (Currency) -> Void
+    private let onPaySuccess: () -> Void
+
     @Environment(\.dismiss) private var dismiss
     @State private var selectedCurrencyID: String?
     @State private var currencies: [Currency] = []
@@ -20,11 +23,13 @@ struct PaymentMethodView: View {
     @State private var isLoading = false
 
     init(
+        viewModel: PaymentViewModel,
         currenciesService: CurrenciesService,
-        onPay: @escaping (Currency) -> Void = { _ in }
+        onPaySuccess: @escaping () -> Void = { }
     ) {
+        _viewModel = State(initialValue: viewModel)
         self.currenciesService = currenciesService
-        self.onPay = onPay
+        self.onPaySuccess = onPaySuccess
     }
 
     private var selectedCurrency: Currency? {
@@ -71,7 +76,6 @@ struct PaymentMethodView: View {
                         .padding(.horizontal, 16)
                         .padding(.top, 36)
                     }
-                    // Повторная загрузка не должна подменять уже загруженный контент
                     .overlay {
                         if isLoading {
                             ProgressView()
@@ -98,7 +102,7 @@ struct PaymentMethodView: View {
 
                 Button {
                     guard let selectedCurrency else { return }
-                    onPay(selectedCurrency)
+                    Task { await pay(with: selectedCurrency) }
                 } label: {
                     Text("Payment.pay")
                         .font(.bodyBold)
@@ -109,7 +113,7 @@ struct PaymentMethodView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
                 .buttonStyle(.plain)
-                .disabled(selectedCurrency == nil)
+                .disabled(selectedCurrency == nil || viewModel.isLoading)
             }
             .padding(.horizontal, 16)
             .padding(.top, 22)
@@ -126,6 +130,44 @@ struct PaymentMethodView: View {
         .task {
             await loadCurrencies()
         }
+        .onChange(of: viewModel.state) { _, newState in
+            switch newState {
+            case .success:
+                ProgressHUD.dismiss()
+                onPaySuccess()
+            case .loading:
+                ProgressHUD.animate(nil, interaction: false)
+            case .idle, .error:
+                ProgressHUD.dismiss()
+            }
+        }
+        .alert("Payment.error.title", isPresented: errorAlertBinding) {
+            Button("Error.repeat") {
+                guard let selectedCurrency else { return }
+                Task { await viewModel.retry(currencyId: selectedCurrency.id) }
+            }
+            Button("Common.cancel", role: .cancel) {
+                viewModel.cancel()
+                dismiss()
+            }
+        } message: {
+            Text("Payment.error.message")
+        }
+    }
+
+    private var errorAlertBinding: Binding<Bool> {
+        Binding(
+            get: { viewModel.state == .error },
+            set: { isPresented in
+                if !isPresented, viewModel.state == .error {
+                    viewModel.cancel()
+                }
+            }
+        )
+    }
+
+    private func pay(with currency: Currency) async {
+        await viewModel.pay(currencyId: currency.id)
     }
 
     private func loadCurrencies() async {
@@ -140,10 +182,8 @@ struct PaymentMethodView: View {
         } catch {
             let message = String(localized: "Error.network")
             if currencies.isEmpty {
-                // Первый запуск: показываем экран ошибки с кнопкой повтора
                 loadingError = message
             } else {
-                // Данные уже на экране: не блокируем список, а сообщаем о проблеме
                 loadingError = nil
                 ProgressHUD.failed(message, interaction: false, delay: 2)
             }
@@ -153,7 +193,10 @@ struct PaymentMethodView: View {
 
 #Preview {
     NavigationStack {
-        PaymentMethodView(currenciesService: MockCurrenciesService())
-            .environment(\.nftImageResolver) { AnyView(MockNFTImage(url: $0)) }
+        PaymentMethodView(
+            viewModel: PaymentViewModel.mock(),
+            currenciesService: MockCurrenciesService()
+        )
+        .environment(\.nftImageResolver) { AnyView(MockNFTImage(url: $0)) }
     }
 }

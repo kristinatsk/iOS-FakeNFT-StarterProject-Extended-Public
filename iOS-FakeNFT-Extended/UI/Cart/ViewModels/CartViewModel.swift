@@ -147,6 +147,13 @@ final class CartViewModel {
     func clearDeletionError() {
         deletionError = nil
     }
+
+    func resetAfterPayment() {
+        items.removeAll()
+        hasLoadedCart = true
+        loadingError = nil
+        hasLoadingFailures = false
+    }
     
     private func makeCellModel(from nft: Nft) -> CartItemCellModel {
         CartItemCellModel(

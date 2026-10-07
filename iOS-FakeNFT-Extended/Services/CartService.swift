@@ -10,6 +10,7 @@ import Foundation
 protocol CartService: Sendable {
     func loadCart(id: String) async throws -> CartItem
     func updateCart(id: String, nftIDs: [String]) async throws
+    func clearCart(id: String) async throws
 }
 
 actor CartServiceImpl: CartService {
@@ -25,5 +26,9 @@ actor CartServiceImpl: CartService {
     
     func updateCart(id: String, nftIDs: [String]) async throws {
         _ = try await networkClient.send(request: CartRequest(orderId: id, action: .update(nfts: nftIDs)))
+    }
+
+    func clearCart(id: String) async throws {
+        _ = try await networkClient.send(request: CartRequest(orderId: id, action: .clear))
     }
 }

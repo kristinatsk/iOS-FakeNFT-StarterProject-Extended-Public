@@ -19,7 +19,9 @@ struct TabBarView: View {
                     cartService: servicesAssembly.cartService,
                     nftService: servicesAssembly.nftService
                 ),
-                currenciesService: servicesAssembly.currenciesService
+                currenciesService: servicesAssembly.currenciesService,
+                paymentService: servicesAssembly.paymentService,
+                cartService: servicesAssembly.cartService
             )
             .tabItem {
                 Label(

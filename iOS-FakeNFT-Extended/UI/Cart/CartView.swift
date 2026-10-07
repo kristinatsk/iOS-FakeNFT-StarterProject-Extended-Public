@@ -11,13 +11,17 @@ import SwiftUI
 struct CartView: View {
     private enum PaymentDestination: Hashable {
         case method
+        case success
     }
 
     @State private var viewModel: CartViewModel
     @State private var itemPendingDeletion: CartItemCellModel?
     @State private var showSortDialog = false
+    @State private var isPaymentFlowActive = false
     @State private var navigationPath = NavigationPath()
     private let currenciesService: CurrenciesService
+    private let paymentService: PaymentService
+    private let cartService: CartService
     
     @AppStorage(CartSortOption.userDefaultsKey)
     private var selectedSortOption = CartSortOption.defaultOption.rawValue
@@ -26,11 +30,22 @@ struct CartView: View {
         CartSortOption(rawValue: selectedSortOption) ?? .defaultOption
     }
 
-    init(viewModel: CartViewModel, currenciesService: CurrenciesService) {
+    init(
+        viewModel: CartViewModel,
+        currenciesService: CurrenciesService,
+        paymentService: PaymentService,
+        cartService: CartService
+    ) {
         _viewModel = State(initialValue: viewModel)
         self.currenciesService = currenciesService
+        self.paymentService = paymentService
+        self.cartService = cartService
     }
     
+    private var isTabBarHidden: Bool {
+        itemPendingDeletion != nil || isPaymentFlowActive
+    }
+
     var body: some View {
         NavigationStack(path: $navigationPath) {
             VStack(spacing: 0) {
@@ -81,16 +96,32 @@ struct CartView: View {
                         count: viewModel.items.count,
                         totalPrice: viewModel.totalPrice,
                         onPay: {
+                            isPaymentFlowActive = true
                             navigationPath.append(PaymentDestination.method)
                         }
                     ))
                 }
             }
-            .toolbar(itemPendingDeletion == nil ? .visible : .hidden, for: .tabBar)
+            .toolbar(isTabBarHidden ? .hidden : .visible, for: .tabBar)
             .navigationDestination(for: PaymentDestination.self) { destination in
                 switch destination {
                 case .method:
-                    PaymentMethodView(currenciesService: currenciesService)
+                    PaymentMethodView(
+                        viewModel: PaymentViewModel(
+                            paymentService: paymentService,
+                            cartService: cartService,
+                            nftIDs: viewModel.items.map(\.id)
+                        ),
+                        currenciesService: currenciesService
+) {
+                        navigationPath.append(PaymentDestination.success)
+                        viewModel.resetAfterPayment()
+                    }
+                case .success:
+                    SuccessPaymentView {
+                        navigationPath = NavigationPath()
+                        isPaymentFlowActive = false
+                    }
                 }
             }
             .background(Color.cartBackground.ignoresSafeArea())
@@ -115,6 +146,11 @@ struct CartView: View {
             .onChange(of: viewModel.hasLoadingFailures) { _, hasFailures in
                 guard hasFailures, !viewModel.isLoadingItems else { return }
                 ProgressHUD.failed(String(localized: "Error.network"), interaction: false, delay: 2)
+            }
+            .onChange(of: navigationPath.count) { _, depth in
+                if depth == 0 {
+                    isPaymentFlowActive = false
+                }
             }
             .task {
                 await viewModel.loadCart()
@@ -202,10 +238,20 @@ struct CartView: View {
 }
 
 #Preview("С товарами") {
-    CartView(viewModel: .mock(), currenciesService: MockCurrenciesService())
-        .environment(\.nftImageResolver) { AnyView(MockNFTImage(url: $0)) }
+    CartView(
+        viewModel: .mock(),
+        currenciesService: MockCurrenciesService(),
+        paymentService: MockPaymentService(),
+        cartService: MockCartService()
+    )
+    .environment(\.nftImageResolver) { AnyView(MockNFTImage(url: $0)) }
 }
 
 #Preview("Пустая") {
-    CartView(viewModel: .mock(items: []), currenciesService: MockCurrenciesService())
+    CartView(
+        viewModel: .mock(items: []),
+        currenciesService: MockCurrenciesService(),
+        paymentService: MockPaymentService(),
+        cartService: MockCartService()
+    )
 }

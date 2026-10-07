@@ -2,7 +2,7 @@
 //  MockCurrenciesService.swift
 //  iOS-FakeNFT-Extended
 //
-//  Created by Павел Кузнецов on 06.10.2026.
+//  Created by Павел Кузнецов на 06.10.2026.
 //
 
 

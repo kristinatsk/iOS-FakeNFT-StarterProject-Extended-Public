@@ -11,6 +11,11 @@ struct CartRequest: NetworkRequest {
     enum Action {
         case fetch
         case update(nfts: [String])
+        case clear
+    }
+
+    private enum Field {
+        static let nfts = "nfts"
     }
 
     let orderId: String
@@ -28,36 +33,25 @@ struct CartRequest: NetworkRequest {
     var httpMethod: HttpMethod {
         switch action {
         case .fetch: .get
-        case .update: .put
+        case .update, .clear: .put
         }
     }
 
     var contentType: String? {
         switch action {
         case .fetch: nil
-        case .update: "application/x-www-form-urlencoded"
+        case .update, .clear: "application/x-www-form-urlencoded"
         }
     }
 
     var formURLEncodedBody: Data? {
-        guard case .update(let nfts) = action else { return nil }
-        return FormURLEncoder.encode(["nfts": nfts.joined(separator: ",")])
-    }
-}
-
-private enum FormURLEncoder {
-    private static let allowed = CharacterSet(
-        charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"
-    )
-
-    static func encode(_ fields: [String: String]) -> Data {
-        let body = fields
-            .map { key, value in
-                let k = key.addingPercentEncoding(withAllowedCharacters: allowed) ?? key
-                let v = value.addingPercentEncoding(withAllowedCharacters: allowed) ?? value
-                return "\(k)=\(v)"
-            }
-            .joined(separator: "&")
-        return Data(body.utf8)
+        switch action {
+        case .fetch:
+            nil
+        case .update(let nfts):
+            FormURLEncoder.encode([Field.nfts: nfts.joined(separator: ",")])
+        case .clear:
+            FormURLEncoder.encodeEmptyArray(key: Field.nfts)
+        }
     }
 }
