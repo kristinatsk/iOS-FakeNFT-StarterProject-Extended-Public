@@ -6,11 +6,24 @@ struct TabBarView: View {
             TestCatalogView()
                 .tabItem {
                     Label(
-                        NSLocalizedString("Tab.catalog", comment: ""),
+                        NSLocalizedString(
+                            "Tab.catalog",
+                            comment: ""
+                        ),
                         systemImage: "square.stack.3d.up.fill"
                     )
                 }
                 .backgroundStyle(.background)
+
+            StatisticsView(
+                viewModel: StatisticsViewModel()
+            )
+            .tabItem {
+                Label(
+                    "Статистика",
+                    systemImage: "chart.bar.fill"
+                )
+            }
         }
     }
 }
