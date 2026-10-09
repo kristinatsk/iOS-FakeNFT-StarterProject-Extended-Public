@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct UserCardView: View {
+
     @StateObject private var viewModel: UserCardViewModel
+    @Environment(\.dismiss) private var dismiss
 
     let userId: String
 
@@ -25,13 +27,59 @@ struct UserCardView: View {
     var body: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView()
+                ProgressView("Загрузка пользователя...")
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity
+                    )
             } else if let model = viewModel.model {
                 content(model)
+            } else if let errorMessage = viewModel.errorMessage {
+                VStack(spacing: 12) {
+                    Text("Не удалось загрузить пользователя")
+                        .font(.headline)
+
+                    Text(errorMessage)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+
+                    Button("Повторить") {
+                        viewModel.load(userId: userId)
+                    }
+                }
+                .padding()
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity
+                )
+            } else {
+                VStack(spacing: 12) {
+                    Text("Данные пользователя не загружены")
+                        .foregroundStyle(.secondary)
+
+                    Button("Загрузить повторно") {
+                        viewModel.load(userId: userId)
+                    }
+                }
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity
+                )
             }
         }
         .navigationTitle("Пользователь")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+            }
+        }
         .onAppear {
             viewModel.load(userId: userId)
         }
@@ -82,10 +130,7 @@ struct UserCardView: View {
                                 .scaledToFill()
                         }
                     }
-                    .frame(
-                        width: 70,
-                        height: 70
-                    )
+                    .frame(width: 70, height: 70)
                     .clipShape(Circle())
 
                     Text(model.name)
@@ -95,7 +140,7 @@ struct UserCardView: View {
                                 weight: .semibold
                             )
                         )
-                        .lineLimit(1)
+                        .lineLimit(2)
 
                     Spacer()
                 }
@@ -125,13 +170,11 @@ struct UserCardView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
                         .overlay {
-                            RoundedRectangle(
-                                cornerRadius: 20
-                            )
-                            .stroke(
-                                .primary,
-                                lineWidth: 1
-                            )
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(
+                                    .primary,
+                                    lineWidth: 1
+                                )
                         }
                 }
 
@@ -153,10 +196,8 @@ struct UserCardView: View {
 
                         Spacer()
 
-                        Image(
-                            systemName: "chevron.right"
-                        )
-                        .foregroundStyle(.tertiary)
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(.tertiary)
                     }
                     .frame(height: 54)
                 }

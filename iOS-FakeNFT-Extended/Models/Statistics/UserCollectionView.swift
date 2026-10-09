@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct UserCollectionView: View {
-    @StateObject private var viewModel: UserCollectionViewModel
 
-    @Environment(\.dismiss)
-    private var dismiss
+    @StateObject private var viewModel: UserCollectionViewModel
+    @Environment(\.dismiss) private var dismiss
 
     init(viewModel: UserCollectionViewModel) {
         _viewModel = StateObject(
@@ -29,12 +28,13 @@ struct UserCollectionView: View {
         }
         .navigationTitle("Коллекция NFT")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(
-                placement: .navigationBarLeading
-            ) {
-                Button("Назад") {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
                     dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
                 }
             }
         }
@@ -83,25 +83,14 @@ struct UserCollectionView: View {
             } else {
                 LazyVGrid(
                     columns: [
-                        GridItem(
-                            .flexible(),
-                            spacing: 12
-                        ),
-                        GridItem(
-                            .flexible(),
-                            spacing: 12
-                        ),
-                        GridItem(
-                            .flexible(),
-                            spacing: 12
-                        )
+                        GridItem(.flexible(), spacing: 12),
+                        GridItem(.flexible(), spacing: 12),
+                        GridItem(.flexible(), spacing: 12)
                     ],
                     spacing: 20
                 ) {
                     ForEach(viewModel.items) { item in
-                        UserCollectionNftCell(
-                            item: item
-                        )
+                        UserCollectionNftCell(item: item)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -113,21 +102,13 @@ struct UserCollectionView: View {
     private var emptyView: some View {
         VStack(spacing: 8) {
             Text("Коллекция пуста")
-                .font(
-                    .system(
-                        size: 17,
-                        weight: .semibold
-                    )
-                )
+                .font(.system(size: 17, weight: .semibold))
 
             Text("У пользователя пока нет NFT")
                 .font(.system(size: 15))
                 .foregroundStyle(.secondary)
         }
-        .frame(
-            maxWidth: .infinity,
-            maxHeight: .infinity
-        )
+        .frame(maxWidth: .infinity)
         .padding(.top, 100)
     }
 }
