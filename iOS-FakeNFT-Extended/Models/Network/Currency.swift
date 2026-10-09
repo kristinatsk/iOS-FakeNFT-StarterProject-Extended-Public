@@ -12,4 +12,9 @@ struct Currency: Decodable, Identifiable, Hashable {
     let title: String
     let name: String
     let imageURL: URL
+
+    private enum CodingKeys: String, CodingKey {
+        case id, title, name
+        case imageURL = "image"
+    }
 }
