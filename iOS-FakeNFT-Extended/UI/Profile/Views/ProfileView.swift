@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @State private var isShowingEditProfile = false
+    @State private var isShowingSafari = false
+    @State private var viewModel = ProfileViewModel()
     
     var body: some View {
         NavigationStack {
@@ -13,24 +14,29 @@ struct ProfileView: View {
                         .frame(width: 70, height: 70)
                         .foregroundColor(.gray)
                     
-                    Text("Joaquin Phoenix")
+                    Text(viewModel.name)
                         .font(Font(UIFont.headline3))
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 20)
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT, и еще больше — на моём сайте. Открыт к коллаборациям.")
+                    Text(viewModel.description)
                         .font(Font(UIFont.caption2))
                         .padding(.horizontal)
                     
                     Button(action: {
-                        
+                        isShowingSafari = true
                     }) {
-                        Text("Joaquin Phoenix.com")
+                        Text(viewModel.website)
                     }
                     .font(Font(UIFont.caption1))
                     .padding(.horizontal, 16)
+                    .sheet(isPresented: $isShowingSafari) {
+                        if let url = URL(string: "https://practicum.yandex.ru") {
+                            SafariView(url: url)
+                        }
+                    }
                 }
                 
                 List {
@@ -46,14 +52,14 @@ struct ProfileView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
-                        EditProfileView()
+                        EditProfileView(viewModel: viewModel)
                     } label: {
                         Image(systemName: "square.and.pencil")
                     }
                 }
             }
         }
-
+        
     }
 }
 

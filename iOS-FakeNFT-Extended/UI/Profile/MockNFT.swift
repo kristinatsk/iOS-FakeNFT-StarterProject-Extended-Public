@@ -6,8 +6,14 @@ struct MockNFT: Identifiable {
     let author: String
     let price: String
     let rating: Double
-    let isFavorite: Bool
+    var isFavorite: Bool
     let imageName: String
+    var numericPrice: Double {
+        let value = price
+            .replacingOccurrences(of: " ETH", with: "")
+            .replacingOccurrences(of: ",", with: ".")
+        return Double(value) ?? 0
+    }
 }
 
 let mockMyNFTs: [MockNFT] = [
@@ -15,24 +21,24 @@ let mockMyNFTs: [MockNFT] = [
         name: "Lilo",
         author: "от John Doe",
         price: "1,78 ETH",
-        rating: 3.0,
-        isFavorite: false,
+        rating: 1.0,
+        isFavorite: true,
         imageName: ""
     ),
     MockNFT(
         name: "Spring",
         author: "от John Doe",
-        price: "1,78 ETH",
-        rating: 3.0,
-        isFavorite: false,
+        price: "0,95 ETH",
+        rating: 4.0,
+        isFavorite: true,
         imageName: ""
     ),
     MockNFT(
         name: "April",
         author: "от John Doe",
-        price: "1,78 ETH",
-        rating: 3.0,
-        isFavorite: false,
+        price: "2,40 ETH",
+        rating: 5.0,
+        isFavorite: true,
         imageName: ""
     )
 ]
