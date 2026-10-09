@@ -14,10 +14,15 @@ struct TabBarView: View {
                 }
                 .backgroundStyle(.background)
 
-            CartView(viewModel: CartViewModel(
-                cartService: servicesAssembly.cartService,
-                nftService: servicesAssembly.nftService
-            ))
+            CartView(
+                viewModel: CartViewModel(
+                    cartService: servicesAssembly.cartService,
+                    nftService: servicesAssembly.nftService
+                ),
+                currenciesService: servicesAssembly.currenciesService,
+                paymentService: servicesAssembly.paymentService,
+                cartService: servicesAssembly.cartService
+            )
             .tabItem {
                 Label(
                     "Tab.cart",

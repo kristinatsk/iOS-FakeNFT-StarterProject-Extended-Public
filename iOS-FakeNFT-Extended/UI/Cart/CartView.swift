@@ -9,104 +9,153 @@ import ProgressHUD
 import SwiftUI
 
 struct CartView: View {
+    private enum PaymentDestination: Hashable {
+        case method
+        case success
+    }
+    
     @State private var viewModel: CartViewModel
     @State private var itemPendingDeletion: CartItemCellModel?
     @State private var showSortDialog = false
+    @State private var isPaymentFlowActive = false
+    @State private var navigationPath = NavigationPath()
+    private let currenciesService: CurrenciesService
+    private let paymentService: PaymentService
+    private let cartService: CartService
     
     @AppStorage(CartSortOption.userDefaultsKey)
     private var selectedSortOption = CartSortOption.defaultOption.rawValue
-
+    
     private var selectedSortOptionValue: CartSortOption {
         CartSortOption(rawValue: selectedSortOption) ?? .defaultOption
     }
-
-    init(viewModel: CartViewModel) {
+    
+    init(
+        viewModel: CartViewModel,
+        currenciesService: CurrenciesService,
+        paymentService: PaymentService,
+        cartService: CartService
+    ) {
         _viewModel = State(initialValue: viewModel)
+        self.currenciesService = currenciesService
+        self.paymentService = paymentService
+        self.cartService = cartService
+    }
+    
+    private var isTabBarHidden: Bool {
+        itemPendingDeletion != nil || isPaymentFlowActive
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            if viewModel.isLoading && viewModel.items.isEmpty {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let errorMessage = viewModel.loadingError, viewModel.items.isEmpty {
-                VStack(spacing: 12) {
-                    Text(errorMessage)
-                        .font(.caption1)
-                        .foregroundStyle(Color.cartTextPrimary)
-                        .multilineTextAlignment(.center)
-                    Button("Error.repeat") {
-                        Task {
-                            await viewModel.reloadCart()
+        NavigationStack(path: $navigationPath) {
+            VStack(spacing: 0) {
+                if viewModel.isLoading && viewModel.items.isEmpty {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if let errorMessage = viewModel.loadingError, viewModel.items.isEmpty {
+                    VStack(spacing: 12) {
+                        Text(errorMessage)
+                            .font(.caption1)
+                            .foregroundStyle(Color.cartTextPrimary)
+                            .multilineTextAlignment(.center)
+                        Button("Error.repeat") {
+                            Task {
+                                await viewModel.reloadCart()
+                            }
                         }
+                        .font(.bodyBold)
                     }
-                    .font(.bodyBold)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if viewModel.isEmpty && viewModel.loadingError == nil {
-                CartEmptyView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                VStack(spacing: 0) {
-                    HStack(spacing: 0) {
-                        Spacer()
-                        sortButton
-                    }
-                    .padding(15)
-                    ScrollView {
-                        LazyVStack(spacing: 0) {
-                            ForEach(Array(viewModel.items.enumerated()), id: \.element.id) { index, item in
-                                VStack(spacing: 0) {
-                                    CartItemCellView(model: item) { item in
-                                        itemPendingDeletion = item
-                                    }
-                                    if index < viewModel.items.count - 1 {
-                                        Color.cartSeparator.frame(height: 0.5)
+                } else if viewModel.isEmpty && viewModel.loadingError == nil {
+                    CartEmptyView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    VStack(spacing: 0) {
+                        HStack(spacing: 0) {
+                            Spacer()
+                            sortButton
+                        }
+                        .padding(15)
+                        ScrollView {
+                            LazyVStack(spacing: 0) {
+                                ForEach(Array(viewModel.items.enumerated()), id: \.element.id) { index, item in
+                                    VStack(spacing: 0) {
+                                        CartItemCellView(model: item) { item in
+                                            itemPendingDeletion = item
+                                        }
+                                        if index < viewModel.items.count - 1 {
+                                            Color.cartSeparator.frame(height: 0.5)
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                    
+                    CartTotalView(model: CartTotalViewModel(
+                        count: viewModel.items.count,
+                        totalPrice: viewModel.totalPrice,
+                        onPay: {
+                            isPaymentFlowActive = true
+                            navigationPath.append(PaymentDestination.method)
+                        }
+                    ))
                 }
-                
-                CartTotalView(model: CartTotalViewModel(
-                    count: viewModel.items.count,
-                    totalPrice: viewModel.totalPrice,
-                    onPay: {
-                        // TODO: в задаче 3 модуля добавить логику оплаты
+            }
+            .toolbar(isTabBarHidden ? .hidden : .visible, for: .tabBar)
+            .navigationDestination(for: PaymentDestination.self) { destination in
+                switch destination {
+                case .method:
+                    PaymentMethodView(
+                        viewModel: PaymentViewModel(
+                            paymentService: paymentService,
+                            cartService: cartService,
+                            currenciesService: currenciesService,
+                            nftIDs: viewModel.items.map(\.id)
+                        )
+                    ) {
+                        navigationPath.append(PaymentDestination.success)
+                        viewModel.resetAfterPayment()
                     }
-                ))
+                case .success:
+                    SuccessPaymentView {
+                        navigationPath = NavigationPath()
+                        isPaymentFlowActive = false
+                    }
+                }
             }
-            
-            
-        }
-        .toolbar(itemPendingDeletion == nil ? .visible : .hidden, for: .tabBar)
-        .background(Color.cartBackground.ignoresSafeArea())
-        .overlay {
-            if let itemPendingDeletion {
-                deleteConfirmationOverlay(for: itemPendingDeletion)
-                    .transition(.opacity)
-                    .zIndex(1)
+            .background(Color.cartBackground.ignoresSafeArea())
+            .overlay {
+                if let itemPendingDeletion {
+                    deleteConfirmationOverlay(for: itemPendingDeletion)
+                        .transition(.opacity)
+                        .zIndex(1)
+                }
             }
-        }
-        .animation(.easeInOut(duration: 0.2), value: itemPendingDeletion?.id)
-        .animation(.none, value: viewModel.items.map(\.id))
-        .onChange(of: viewModel.isLoadingItems) { _, isLoadingItems in
-            if isLoadingItems {
-                ProgressHUD.animate(nil, interaction: false)
-            } else if viewModel.hasLoadingFailures {
+            .animation(.easeInOut(duration: 0.2), value: itemPendingDeletion?.id)
+            .animation(.none, value: viewModel.items.map(\.id))
+            .onChange(of: viewModel.isLoadingItems) { _, isLoadingItems in
+                if isLoadingItems {
+                    ProgressHUD.animate(nil, interaction: false)
+                } else if viewModel.hasLoadingFailures {
+                    ProgressHUD.failed(String(localized: "Error.network"), interaction: false, delay: 2)
+                } else {
+                    ProgressHUD.dismiss()
+                }
+            }
+            .onChange(of: viewModel.hasLoadingFailures) { _, hasFailures in
+                guard hasFailures, !viewModel.isLoadingItems else { return }
                 ProgressHUD.failed(String(localized: "Error.network"), interaction: false, delay: 2)
-            } else {
-                ProgressHUD.dismiss()
             }
-        }
-        .onChange(of: viewModel.hasLoadingFailures) { _, hasFailures in
-            guard hasFailures, !viewModel.isLoadingItems else { return }
-            ProgressHUD.failed(String(localized: "Error.network"), interaction: false, delay: 2)
-        }
-        .task {
-            await viewModel.loadCart()
-            viewModel.sortItems(by: selectedSortOptionValue)
+            .onChange(of: navigationPath.count) { _, depth in
+                if depth == 0 {
+                    isPaymentFlowActive = false
+                }
+            }
+            .task {
+                await viewModel.loadCart()
+                viewModel.sortItems(by: selectedSortOptionValue)
+            }
         }
     }
     
@@ -121,7 +170,7 @@ struct CartView: View {
                         itemPendingDeletion = nil
                     }
                     .accessibilityHidden(true)
-
+                
                 CartDeleteConfirmationView(
                     item: item,
                     onDelete: {
@@ -146,7 +195,7 @@ struct CartView: View {
         }
         .ignoresSafeArea()
     }
-
+    
     private var sortButton: some View {
         Button {
             showSortDialog = true
@@ -189,10 +238,20 @@ struct CartView: View {
 }
 
 #Preview("С товарами") {
-    CartView(viewModel: .mock())
-        .environment(\.nftImageResolver) { AnyView(MockNFTImage(url: $0)) }
+    CartView(
+        viewModel: .mock(),
+        currenciesService: MockCurrenciesService(),
+        paymentService: MockPaymentService(),
+        cartService: MockCartService()
+    )
+    .environment(\.nftImageResolver) { AnyView(MockNFTImage(url: $0)) }
 }
 
 #Preview("Пустая") {
-    CartView(viewModel: .mock(items: []))
+    CartView(
+        viewModel: .mock(items: []),
+        currenciesService: MockCurrenciesService(),
+        paymentService: MockPaymentService(),
+        cartService: MockCartService()
+    )
 }
