@@ -13,7 +13,7 @@ struct CartView: View {
         case method
         case success
     }
-
+    
     @State private var viewModel: CartViewModel
     @State private var itemPendingDeletion: CartItemCellModel?
     @State private var showSortDialog = false
@@ -25,11 +25,11 @@ struct CartView: View {
     
     @AppStorage(CartSortOption.userDefaultsKey)
     private var selectedSortOption = CartSortOption.defaultOption.rawValue
-
+    
     private var selectedSortOptionValue: CartSortOption {
         CartSortOption(rawValue: selectedSortOption) ?? .defaultOption
     }
-
+    
     init(
         viewModel: CartViewModel,
         currenciesService: CurrenciesService,
@@ -45,7 +45,7 @@ struct CartView: View {
     private var isTabBarHidden: Bool {
         itemPendingDeletion != nil || isPaymentFlowActive
     }
-
+    
     var body: some View {
         NavigationStack(path: $navigationPath) {
             VStack(spacing: 0) {
@@ -91,7 +91,7 @@ struct CartView: View {
                             }
                         }
                     }
-
+                    
                     CartTotalView(model: CartTotalViewModel(
                         count: viewModel.items.count,
                         totalPrice: viewModel.totalPrice,
@@ -110,10 +110,10 @@ struct CartView: View {
                         viewModel: PaymentViewModel(
                             paymentService: paymentService,
                             cartService: cartService,
+                            currenciesService: currenciesService,
                             nftIDs: viewModel.items.map(\.id)
-                        ),
-                        currenciesService: currenciesService
-) {
+                        )
+                    ) {
                         navigationPath.append(PaymentDestination.success)
                         viewModel.resetAfterPayment()
                     }
@@ -170,7 +170,7 @@ struct CartView: View {
                         itemPendingDeletion = nil
                     }
                     .accessibilityHidden(true)
-
+                
                 CartDeleteConfirmationView(
                     item: item,
                     onDelete: {
@@ -195,7 +195,7 @@ struct CartView: View {
         }
         .ignoresSafeArea()
     }
-
+    
     private var sortButton: some View {
         Button {
             showSortDialog = true

@@ -24,8 +24,6 @@ struct SuccessPaymentView: View {
         .frame(maxWidth: .infinity)
         .background(Color.cartBackground)
 
-        Spacer()
-
         Button {
             onBackToCart()
         } label: {
@@ -40,6 +38,7 @@ struct SuccessPaymentView: View {
         .buttonStyle(.plain)
         .padding(16)
         .navigationBarBackButtonHidden(true)
+        .background(Color.cartBackground)
     }
 }
 

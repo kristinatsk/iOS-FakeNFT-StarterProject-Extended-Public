@@ -13,7 +13,7 @@ struct PaymentMethodHeaderView: View {
     var body: some View {
         HStack {
             Button(action: onBack) {
-                Image(systemName: "chevron.left")
+                Image(systemName: SystemImageName.chevronLeft)
                     .font(.system(size: 20, weight: .medium))
                     .foregroundStyle(Color.cartTextPrimary)
             }

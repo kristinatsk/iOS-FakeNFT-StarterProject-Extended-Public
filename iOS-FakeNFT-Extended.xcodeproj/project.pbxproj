@@ -25,6 +25,8 @@
 		3298F54F307679590073B1AB /* PaymentRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3298F54E307679590073B1AB /* PaymentRequest.swift */; };
 		3298F551307679670073B1AB /* PaymentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3298F550307679670073B1AB /* PaymentViewModel.swift */; };
 		3298F5533076796A0073B1AB /* MockPaymentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3298F5523076796A0073B1AB /* MockPaymentService.swift */; };
+		32ABC2A730790C18003409F1 /* SystemImageName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32ABC2A630790C18003409F1 /* SystemImageName.swift */; };
+		32ABC2A930790C67003409F1 /* AppURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32ABC2A830790C67003409F1 /* AppURL.swift */; };
 		32B7AC573065465E0077B9E3 /* CartDeleteConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B7AC563065465E0077B9E3 /* CartDeleteConfirmationView.swift */; };
 		32B7AC7E30659E050077B9E3 /* MockServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B7AC7D30659E000077B9E3 /* MockServices.swift */; };
 		32B7AC803065BFAD0077B9E3 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 32B7AC7F3065BFAD0077B9E3 /* Config.xcconfig */; };
@@ -110,6 +112,8 @@
 		3298F54E307679590073B1AB /* PaymentRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentRequest.swift; sourceTree = "<group>"; };
 		3298F550307679670073B1AB /* PaymentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentViewModel.swift; sourceTree = "<group>"; };
 		3298F5523076796A0073B1AB /* MockPaymentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPaymentService.swift; sourceTree = "<group>"; };
+		32ABC2A630790C18003409F1 /* SystemImageName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemImageName.swift; sourceTree = "<group>"; };
+		32ABC2A830790C67003409F1 /* AppURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppURL.swift; sourceTree = "<group>"; };
 		32B7AC563065465E0077B9E3 /* CartDeleteConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartDeleteConfirmationView.swift; sourceTree = "<group>"; };
 		32B7AC7D30659E000077B9E3 /* MockServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServices.swift; sourceTree = "<group>"; };
 		32B7AC7F3065BFAD0077B9E3 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
@@ -322,6 +326,7 @@
 			children = (
 				ABC5E1962C31F656002B4068 /* Colors.swift */,
 				ABC5E1982C31F666002B4068 /* Fonts.swift */,
+				32ABC2A630790C18003409F1 /* SystemImageName.swift */,
 			);
 			path = DesignSystem;
 			sourceTree = "<group>";
@@ -332,6 +337,7 @@
 				ABC5E19B2C31F69C002B4068 /* MemoryStorage */,
 				ABC5E1A22C31F7E8002B4068 /* NetworkClient */,
 				ABC5E1A72C31FA90002B4068 /* DateFormatters+Presets.swift */,
+				32ABC2A830790C67003409F1 /* AppURL.swift */,
 			);
 			path = Foundation;
 			sourceTree = "<group>";
@@ -596,6 +602,7 @@
 				32FF47A630631C9D000A6062 /* CartTotalViewModel.swift in Sources */,
 				ABC5E19D2C31F6A6002B4068 /* NftStorage.swift in Sources */,
 				ABC5E1E82C320610002B4068 /* NftDetailBridgeView.swift in Sources */,
+				32ABC2A930790C67003409F1 /* AppURL.swift in Sources */,
 				ABC5E1E62C320585002B4068 /* LinePageControl.swift in Sources */,
 				3298F54F307679590073B1AB /* PaymentRequest.swift in Sources */,
 				32FF479830631B74000A6062 /* CartViewModel.swift in Sources */,
@@ -606,6 +613,7 @@
 				ABC5E1E42C32055B002B4068 /* ErrorView.swift in Sources */,
 				3298F551307679670073B1AB /* PaymentViewModel.swift in Sources */,
 				ABC5E1A62C31F815002B4068 /* NetworkRequest.swift in Sources */,
+				32ABC2A730790C18003409F1 /* SystemImageName.swift in Sources */,
 				32FF47A030631C18000A6062 /* CartItemCellView.swift in Sources */,
 				32FF479530631B42000A6062 /* CartView.swift in Sources */,
 				ABC5E1D52C320446002B4068 /* NftDetailInput.swift in Sources */,

@@ -8,10 +8,6 @@
 import Kingfisher
 import SwiftUI
 
-private enum SystemImageName {
-    static let photo = "photo"
-}
-
 // MARK: - Environment key
 
 private struct NFTImageResolverKey: EnvironmentKey {

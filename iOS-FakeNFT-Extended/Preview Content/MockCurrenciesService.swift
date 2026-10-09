@@ -15,19 +15,19 @@ struct MockCurrenciesService: CurrenciesService {
                 id: "1",
                 title: "Bitcoin",
                 name: "BTC",
-                image: URL(string: "https://example.com/bitcoin.png")!
+                imageURL: URL(string: "https://example.com/bitcoin.png")!
             ),
             Currency(
                 id: "2",
                 title: "Ethereum",
                 name: "ETH",
-                image: URL(string: "https://example.com/ethereum.png")!
+                imageURL: URL(string: "https://example.com/ethereum.png")!
             ),
             Currency(
                 id: "3",
                 title: "Tether",
                 name: "USDT",
-                image: URL(string: "https://example.com/tether.png")!
+                imageURL: URL(string: "https://example.com/tether.png")!
             )
         ]
     }

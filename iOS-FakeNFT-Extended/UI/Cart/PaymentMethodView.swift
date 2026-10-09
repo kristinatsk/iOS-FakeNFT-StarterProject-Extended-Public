@@ -12,28 +12,21 @@ import SwiftUI
 struct PaymentMethodView: View {
     @State private var viewModel: PaymentViewModel
 
-    private let currenciesService: CurrenciesService
     private let onPaySuccess: () -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedCurrencyID: String?
-    @State private var currencies: [Currency] = []
     @State private var isShowingAgreement = false
-    @State private var loadingError: String?
-    @State private var isLoading = false
 
     init(
         viewModel: PaymentViewModel,
-        currenciesService: CurrenciesService,
         onPaySuccess: @escaping () -> Void = { }
     ) {
         _viewModel = State(initialValue: viewModel)
-        self.currenciesService = currenciesService
         self.onPaySuccess = onPaySuccess
     }
 
     private var selectedCurrency: Currency? {
-        currencies.first { $0.id == selectedCurrencyID }
+        viewModel.selectedCurrency
     }
 
     var body: some View {
@@ -43,18 +36,18 @@ struct PaymentMethodView: View {
             }
 
             Group {
-                if isLoading && currencies.isEmpty {
+                if viewModel.isInitialLoading {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if let loadingError, currencies.isEmpty {
+                } else if let currenciesError = viewModel.currenciesError, viewModel.currencies.isEmpty {
                     VStack(spacing: 12) {
-                        Text(loadingError)
+                        Text(currenciesError)
                             .font(.caption1)
                             .foregroundStyle(Color.cartTextPrimary)
                             .multilineTextAlignment(.center)
 
                         Button("Error.repeat") {
-                            Task { await loadCurrencies() }
+                            Task { await viewModel.loadCurrencies() }
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -64,12 +57,12 @@ struct PaymentMethodView: View {
                             columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)],
                             spacing: 10
                         ) {
-                            ForEach(currencies) { currency in
+                            ForEach(viewModel.currencies) { currency in
                                 CryptoCurrencyCell(
                                     currency: currency,
-                                    isSelected: selectedCurrencyID == currency.id
+                                    isSelected: viewModel.selectedCurrencyID == currency.id
                                 ) {
-                                    selectedCurrencyID = currency.id
+                                    viewModel.selectCurrency(id: currency.id)
                                 }
                             }
                         }
@@ -77,7 +70,7 @@ struct PaymentMethodView: View {
                         .padding(.top, 36)
                     }
                     .overlay {
-                        if isLoading {
+                        if viewModel.isLoadingCurrencies {
                             ProgressView()
                         }
                     }
@@ -120,6 +113,7 @@ struct PaymentMethodView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.cartSeparator)
             .clipShape(.rect(topLeadingRadius: 12, topTrailingRadius: 12))
+            .background(Color.cartSeparator.ignoresSafeArea(edges: .bottom))
         }
         .background(Color.cartBackground.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
@@ -128,7 +122,12 @@ struct PaymentMethodView: View {
             UserAgreementView()
         }
         .task {
-            await loadCurrencies()
+            await viewModel.loadCurrencies()
+        }
+        .onChange(of: viewModel.currenciesError) { _, error in
+            // Ошибка при непустом списке показывается только всплывающим HUD
+            guard let error, !viewModel.currencies.isEmpty else { return }
+            ProgressHUD.failed(error, interaction: false, delay: 2)
         }
         .onChange(of: viewModel.state) { _, newState in
             switch newState {
@@ -169,33 +168,12 @@ struct PaymentMethodView: View {
     private func pay(with currency: Currency) async {
         await viewModel.pay(currencyId: currency.id)
     }
-
-    private func loadCurrencies() async {
-        guard !isLoading else { return }
-        isLoading = true
-        defer { isLoading = false }
-
-        do {
-            currencies = try await currenciesService.loadCurrencies()
-            loadingError = nil
-            ProgressHUD.dismiss()
-        } catch {
-            let message = String(localized: "Error.network")
-            if currencies.isEmpty {
-                loadingError = message
-            } else {
-                loadingError = nil
-                ProgressHUD.failed(message, interaction: false, delay: 2)
-            }
-        }
-    }
 }
 
 #Preview {
     NavigationStack {
         PaymentMethodView(
-            viewModel: PaymentViewModel.mock(),
-            currenciesService: MockCurrenciesService()
+            viewModel: PaymentViewModel.mock()
         )
         .environment(\.nftImageResolver) { AnyView(MockNFTImage(url: $0)) }
     }

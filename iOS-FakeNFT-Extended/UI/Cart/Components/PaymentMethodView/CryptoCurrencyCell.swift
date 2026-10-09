@@ -17,7 +17,7 @@ struct CryptoCurrencyCell: View {
     var body: some View {
         Button(action: onSelect) {
             HStack(spacing: 8) {
-                imageResolver(currency.image)
+                imageResolver(currency.imageURL)
                     .frame(width: 40, height: 40)
                     .clipShape(RoundedRectangle(cornerRadius: 9))
                     .accessibilityHidden(true)
