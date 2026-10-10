@@ -62,6 +62,7 @@
 		DE303BED307281D000C48FC0 /* UserCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE303BEC307281CE00C48FC0 /* UserCardViewModel.swift */; };
 		DE303BEF307281E200C48FC0 /* UserCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE303BEE307281E100C48FC0 /* UserCardView.swift */; };
 		DE303BF33072825C00C48FC0 /* UserCardModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE303BF23072825B00C48FC0 /* UserCardModule.swift */; };
+		DE818517307AE68F00709D37 /* Урсан Андрей.md in Resources */ = {isa = PBXBuildFile; fileRef = DE818516307AE68F00709D37 /* Урсан Андрей.md */; };
 		DE8C064830758BBD00B21D53 /* UserCollectionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8C064730758BBA00B21D53 /* UserCollectionItem.swift */; };
 		DE8C064A30758BCF00B21D53 /* UserCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8C064930758BCE00B21D53 /* UserCollectionViewModel.swift */; };
 		DE8C064C30758BE600B21D53 /* UserCollectionNFTCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8C064B30758BE400B21D53 /* UserCollectionNFTCell.swift */; };
@@ -144,6 +145,7 @@
 		DE303BEC307281CE00C48FC0 /* UserCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCardViewModel.swift; sourceTree = "<group>"; };
 		DE303BEE307281E100C48FC0 /* UserCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCardView.swift; sourceTree = "<group>"; };
 		DE303BF23072825B00C48FC0 /* UserCardModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCardModule.swift; sourceTree = "<group>"; };
+		DE818516307AE68F00709D37 /* Урсан Андрей.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Урсан Андрей.md"; sourceTree = "<group>"; };
 		DE8C064730758BBA00B21D53 /* UserCollectionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCollectionItem.swift; sourceTree = "<group>"; };
 		DE8C064930758BCE00B21D53 /* UserCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCollectionViewModel.swift; sourceTree = "<group>"; };
 		DE8C064B30758BE400B21D53 /* UserCollectionNFTCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCollectionNFTCell.swift; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 		ABC5E16A2C31F5AF002B4068 /* iOS-FakeNFT-Extended */ = {
 			isa = PBXGroup;
 			children = (
+				DE818514307AE47300709D37 /* Decompilation */,
 				ABC5E16B2C31F5AF002B4068 /* iOS_FakeNFT_ExtendedApp.swift */,
 				ABC5E1E92C32084F002B4068 /* Localizable.strings */,
 				ABC5E1952C31F64A002B4068 /* DesignSystem */,
@@ -430,6 +433,14 @@
 			path = Statistics;
 			sourceTree = "<group>";
 		};
+		DE818514307AE47300709D37 /* Decompilation */ = {
+			isa = PBXGroup;
+			children = (
+				DE818516307AE68F00709D37 /* Урсан Андрей.md */,
+			);
+			path = Decompilation;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -542,6 +553,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DE818517307AE68F00709D37 /* Урсан Андрей.md in Resources */,
 				ABC5E1732C31F5AF002B4068 /* Preview Assets.xcassets in Resources */,
 				ABC5E1EB2C32084F002B4068 /* Localizable.strings in Resources */,
 				ABC5E1702C31F5AF002B4068 /* Assets.xcassets in Resources */,
