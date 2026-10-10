@@ -8,30 +8,86 @@
 import SwiftUI
 
 struct UserCardView: View {
-    @StateObject private var viewModel: UserCardViewModel
 
+    @StateObject private var viewModel: UserCardViewModel
     @Environment(\.dismiss) private var dismiss
 
     let userId: String
+
+    private let figmaColor = Color(
+        red: 26.0 / 255.0,
+        green: 27.0 / 255.0,
+        blue: 34.0 / 255.0
+    )
 
     init(
         userId: String,
         viewModel: UserCardViewModel
     ) {
         self.userId = userId
-        _viewModel = StateObject(wrappedValue: viewModel)
+        _viewModel = StateObject(
+            wrappedValue: viewModel
+        )
     }
 
     var body: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView()
+                ProgressView("Загрузка пользователя...")
+                    .frame(
+                        maxWidth: .infinity,
+                        maxHeight: .infinity
+                    )
             } else if let model = viewModel.model {
                 content(model)
+            } else if let errorMessage = viewModel.errorMessage {
+                VStack(spacing: 12) {
+                    Text("Не удалось загрузить пользователя")
+                        .font(.headline)
+
+                    Text(errorMessage)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+
+                    Button("Повторить") {
+                        viewModel.load(userId: userId)
+                    }
+                }
+                .padding()
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity
+                )
+            } else {
+                VStack(spacing: 12) {
+                    Text("Данные пользователя не загружены")
+                        .foregroundStyle(.secondary)
+
+                    Button("Загрузить повторно") {
+                        viewModel.load(userId: userId)
+                    }
+                }
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity
+                )
             }
         }
         .navigationTitle("Пользователь")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .foregroundStyle(.primary)
+                }
+            }
+        }
         .onAppear {
             viewModel.load(userId: userId)
         }
@@ -56,11 +112,20 @@ struct UserCardView: View {
         }
     }
 
-    private func content(_ model: UserCardModel) -> some View {
+    private func content(
+        _ model: UserCardModel
+    ) -> some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(
+                alignment: .leading,
+                spacing: 16
+            ) {
                 HStack(spacing: 16) {
-                    AsyncImage(url: URL(string: model.avatarURLString)) { phase in
+                    AsyncImage(
+                        url: URL(
+                            string: model.avatarURLString
+                        )
+                    ) { phase in
                         switch phase {
                         case .success(let image):
                             image
@@ -77,15 +142,23 @@ struct UserCardView: View {
                     .clipShape(Circle())
 
                     Text(model.name)
-                        .font(.system(size: 22, weight: .semibold))
-                        .lineLimit(1)
+                        .font(
+                            .system(
+                                size: 22,
+                                weight: .semibold
+                            )
+                        )
+                        .lineLimit(2)
 
                     Spacer()
                 }
 
                 Text(model.description)
                     .font(.system(size: 15))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(
+                        maxWidth: .infinity,
+                        alignment: .leading
+                    )
 
                 Button {
                     guard let url = viewModel.websiteTapped() else {
@@ -95,22 +168,40 @@ struct UserCardView: View {
                     UIApplication.shared.open(url)
                 } label: {
                     Text("Перейти на сайт пользователя")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(.primary)
+                        .font(
+                            .system(
+                                size: 15,
+                                weight: .medium
+                            )
+                        )
+                        .foregroundStyle(figmaColor)
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
                         .overlay {
                             RoundedRectangle(cornerRadius: 20)
-                                .stroke(.primary, lineWidth: 1)
+                                .stroke(
+                                    figmaColor,
+                                    lineWidth: 1
+                                )
                         }
                 }
+                .buttonStyle(.plain)
 
                 NavigationLink {
-                    Text("Коллекция NFT")
+                    UserCollectionModule.make(
+                        userId: userId
+                    )
                 } label: {
                     HStack {
-                        Text("Коллекция NFT (\(model.nftCount))")
-                            .font(.system(size: 17, weight: .semibold))
+                        Text(
+                            "Коллекция NFT (\(model.nftCount))"
+                        )
+                        .font(
+                            .system(
+                                size: 17,
+                                weight: .semibold
+                            )
+                        )
 
                         Spacer()
 

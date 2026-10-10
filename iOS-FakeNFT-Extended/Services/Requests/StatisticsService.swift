@@ -7,12 +7,11 @@
 
 import Foundation
 
-protocol StatisticsServiceProtocol {
+protocol StatisticsServiceProtocol: Sendable {
     func fetchUsers() async throws -> [StatisticsUserDTO]
 }
 
-final class StatisticsService: StatisticsServiceProtocol {
-
+actor StatisticsService: StatisticsServiceProtocol {
     private let client: NetworkClient
 
     init(client: NetworkClient = DefaultNetworkClient()) {
@@ -21,7 +20,6 @@ final class StatisticsService: StatisticsServiceProtocol {
 
     func fetchUsers() async throws -> [StatisticsUserDTO] {
         let request = UsersRequest()
-
         return try await client.send(request: request)
     }
 }
