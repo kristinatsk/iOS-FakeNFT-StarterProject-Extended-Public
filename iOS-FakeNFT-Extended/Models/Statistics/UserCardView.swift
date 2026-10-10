@@ -14,6 +14,12 @@ struct UserCardView: View {
 
     let userId: String
 
+    private let figmaColor = Color(
+        red: 26.0 / 255.0,
+        green: 27.0 / 255.0,
+        blue: 34.0 / 255.0
+    )
+
     init(
         userId: String,
         viewModel: UserCardViewModel
@@ -70,6 +76,7 @@ struct UserCardView: View {
         }
         .navigationTitle("Пользователь")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -77,6 +84,7 @@ struct UserCardView: View {
                     dismiss()
                 } label: {
                     Image(systemName: "chevron.left")
+                        .foregroundStyle(.primary)
                 }
             }
         }
@@ -166,17 +174,18 @@ struct UserCardView: View {
                                 weight: .medium
                             )
                         )
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(figmaColor)
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
                         .overlay {
                             RoundedRectangle(cornerRadius: 20)
                                 .stroke(
-                                    .primary,
+                                    figmaColor,
                                     lineWidth: 1
                                 )
                         }
                 }
+                .buttonStyle(.plain)
 
                 NavigationLink {
                     UserCollectionModule.make(

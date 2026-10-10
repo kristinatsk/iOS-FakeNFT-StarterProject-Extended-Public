@@ -28,6 +28,7 @@ struct UserCollectionView: View {
         }
         .navigationTitle("Коллекция NFT")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {

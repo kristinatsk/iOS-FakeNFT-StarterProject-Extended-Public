@@ -11,6 +11,8 @@ struct StatisticsView: View {
 
     @StateObject private var viewModel: StatisticsViewModel
     @State private var isSortSheetPresented = false
+    @State private var selectedUserID: String?
+    @State private var isUserCardPresented = false
 
     init(viewModel: StatisticsViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -41,9 +43,14 @@ struct StatisticsView: View {
                 isPresented: $isSortSheetPresented
             ) {
                 sortSheet
-                    .presentationDetents(
-                        [.height(180)]
-                    )
+                    .presentationDetents([.height(180)])
+            }
+            .navigationDestination(
+                isPresented: $isUserCardPresented
+            ) {
+                if let userID = selectedUserID {
+                    UserCardModule.make(userId: userID)
+                }
             }
             .alert(
                 "Ошибка",
@@ -76,17 +83,17 @@ struct StatisticsView: View {
                 Array(viewModel.users.enumerated()),
                 id: \.element.id
             ) { index, user in
-
-                NavigationLink {
-                    UserCardModule.make(
-                        userId: user.id
-                    )
+                Button {
+                    selectedUserID = user.id
+                    isUserCardPresented = true
                 } label: {
                     StatisticsUserRow(
                         place: index + 1,
                         user: user
                     )
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
                 .listRowInsets(
                     EdgeInsets(
                         top: 4,
