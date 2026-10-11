@@ -160,6 +160,3 @@ struct EditProfileView: View {
     }
 }
 
-#Preview {
-    EditProfileView(viewModel: ProfileViewModel())
-}

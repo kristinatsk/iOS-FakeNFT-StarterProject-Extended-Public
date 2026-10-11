@@ -1,8 +1,26 @@
 import SwiftUI
 
 struct ProfileView: View {
+    let profileService: ProfileServiceProtocol
+    let nftService: NftService
+
     @State private var isShowingSafari = false
-    @State private var viewModel = ProfileViewModel()
+    @State private var viewModel: ProfileViewModel
+    
+    init(
+        profileService: ProfileServiceProtocol,
+        nftService: NftService
+    ) {
+        self.profileService = profileService
+        self.nftService = nftService
+        
+        _viewModel = State(
+            initialValue: ProfileViewModel(
+                profileService: profileService
+            )
+        )
+        
+    }
     
     var body: some View {
         NavigationStack {
@@ -40,8 +58,18 @@ struct ProfileView: View {
                 }
                 
                 List {
-                    NavigationLink("Мои NFT (112)", destination: MyNFTView())
-                    NavigationLink("Избранные NFT (11)", destination: FavoriteNFTView())
+                    NavigationLink(
+                        "Мои NFT (\(viewModel.nfts.count))",
+                        destination: MyNFTView(
+                            nftIDs: viewModel.nfts,
+                            favoriteIDs: viewModel.likes,
+                            nftService: nftService
+                        )
+                    )
+                    NavigationLink(
+                        "Избранные NFT (\(viewModel.likes.count))",
+                        destination: FavoriteNFTView()
+                    )
                     
                 }
                 .listStyle(.plain)
@@ -59,10 +87,10 @@ struct ProfileView: View {
                 }
             }
         }
+        .task {
+            await viewModel.fetchProfile()
+        }
         
     }
 }
 
-#Preview {
-    ProfileView()
-}
