@@ -33,4 +33,31 @@ final class ProfileViewModel {
             errorMessage = error.localizedDescription
         }
     }
+    
+    func updateProfile(
+        name: String,
+        description: String,
+        website: String,
+        avatar: String?
+    ) async {
+        errorMessage = nil
+        isLoading = true
+        
+        defer { isLoading = false }
+        do {
+            let profile = try await profileService.updateProfile(
+                name: name,
+                description: description,
+                website: website,
+                avatar: avatar
+            )
+            self.name = profile.name
+            self.description = profile.description
+            self.website = profile.website
+            self.avatar = profile.avatar
+            
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
 }

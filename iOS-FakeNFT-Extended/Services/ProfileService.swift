@@ -3,6 +3,12 @@ import Foundation
 protocol ProfileServiceProtocol {
     func fetchProfile() async throws -> ProfileDTO
     func updateLikes(_ likes: [String]) async throws -> ProfileDTO
+    func updateProfile(
+        name: String,
+        description: String,
+        website: String,
+        avatar: String?
+    ) async throws -> ProfileDTO
 }
 
 actor ProfileService: ProfileServiceProtocol {
@@ -19,6 +25,22 @@ actor ProfileService: ProfileServiceProtocol {
     
     func updateLikes(_ likes: [String]) async throws -> ProfileDTO {
         let request = ProfileUpdateRequest(likes: likes)
+        return try await networkClient.send(request: request)
+    }
+    
+    func updateProfile(
+        name: String,
+        description: String,
+        website: String,
+        avatar: String?
+    ) async throws -> ProfileDTO {
+        let request = ProfileUpdateRequest(
+            name: name,
+            description: description,
+            website: website,
+            avatar: avatar
+        )
+        
         return try await networkClient.send(request: request)
     }
 }
