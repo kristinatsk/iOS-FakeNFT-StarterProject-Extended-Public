@@ -8,11 +8,27 @@ struct TabBarView: View {
             TestCatalogView()
                 .tabItem {
                     Label(
-                        "Tab.catalog",
+                        NSLocalizedString(
+                            "Tab.catalog",
+                            comment: ""
+                        ),
                         systemImage: "square.stack.3d.up.fill"
                     )
                 }
                 .backgroundStyle(.background)
+
+            StatisticsView(
+                viewModel: StatisticsViewModel()
+            )
+            .tabItem {
+                Label(
+                    NSLocalizedString(
+                        "Tab.statistics",
+                        comment: ""
+                    ),
+                    systemImage: "chart.bar.fill"
+                )
+            }
 
             CartView(
                 viewModel: CartViewModel(
@@ -25,7 +41,10 @@ struct TabBarView: View {
             )
             .tabItem {
                 Label(
-                    "Tab.cart",
+                    NSLocalizedString(
+                        "Tab.cart",
+                        comment: ""
+                    ),
                     image: "cart"
                 )
             }

@@ -158,10 +158,10 @@ final class CartViewModel {
     private func makeCellModel(from nft: Nft) -> CartItemCellModel {
         CartItemCellModel(
             id: nft.id,
-            name: nft.name ?? "NFT #\(nft.id)",
-            imageURL: nft.images.first,
-            rating: nft.rating ?? 0,
-            price: nft.price ?? 0
+            name: nft.name,
+            imageURL: nft.images.first.flatMap(URL.init),
+            rating: nft.rating,
+            price: nft.price
         )
     }
 }
