@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct TabBarView: View {
+    @Environment(ServicesAssembly.self) private var servicesAssembly
+
     var body: some View {
         TabView {
             TestCatalogView()
@@ -20,8 +22,30 @@ struct TabBarView: View {
             )
             .tabItem {
                 Label(
-                    "Статистика",
+                    NSLocalizedString(
+                        "Tab.statistics",
+                        comment: ""
+                    ),
                     systemImage: "chart.bar.fill"
+                )
+            }
+
+            CartView(
+                viewModel: CartViewModel(
+                    cartService: servicesAssembly.cartService,
+                    nftService: servicesAssembly.nftService
+                ),
+                currenciesService: servicesAssembly.currenciesService,
+                paymentService: servicesAssembly.paymentService,
+                cartService: servicesAssembly.cartService
+            )
+            .tabItem {
+                Label(
+                    NSLocalizedString(
+                        "Tab.cart",
+                        comment: ""
+                    ),
+                    image: "cart"
                 )
             }
         }

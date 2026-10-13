@@ -53,13 +53,25 @@ actor DefaultNetworkClient: NetworkClient {
         }
 
         var urlRequest = URLRequest(url: endpoint)
+        urlRequest.cachePolicy = .reloadIgnoringLocalCacheData
         urlRequest.httpMethod = request.httpMethod.rawValue
 
-        if let dto = request.dto,
-           let dtoEncoded = try? encoder.encode(dto) {
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            urlRequest.httpBody = dtoEncoded
+        if let formBody = request.formURLEncodedBody {
+            urlRequest.setValue(
+                request.contentType ?? "application/x-www-form-urlencoded",
+                forHTTPHeaderField: "Content-Type"
+            )
+            urlRequest.httpBody = formBody
+        } else if let dto = request.dto {
+            do {
+                urlRequest.httpBody = try encoder.encode(dto)
+                urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            } catch {
+                throw NetworkClientError.urlRequestError(error)
+            }
         }
+        
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
         urlRequest.addValue(RequestConstants.token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
 
         return urlRequest
