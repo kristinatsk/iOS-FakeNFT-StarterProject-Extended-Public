@@ -6,8 +6,9 @@ struct EditProfileView: View {
     @State private var website: String
     @State private var isShowingPhotoMenu = false
     @State private var isShowingPhotoLinkAlert = false
-    @State private var isLoading = false
     @State private var isShowingExitAlert = false
+    @State private var avatar: String
+    @State private var avatarDraft: String
     @Environment(\.dismiss) private var dismiss
     var viewModel: ProfileViewModel
     
@@ -16,7 +17,8 @@ struct EditProfileView: View {
         _name = State(initialValue: viewModel.name)
         _description = State(initialValue: viewModel.description)
         _website = State(initialValue: viewModel.website)
-        
+        _avatar = State(initialValue: viewModel.avatar)
+        _avatarDraft = State(initialValue: viewModel.avatar)
     }
     
     var body: some View {
@@ -29,14 +31,27 @@ struct EditProfileView: View {
                     Button {
                         isShowingPhotoMenu = true
                     } label: {
-                        
-                        Image(systemName: "person.crop.circle.fill")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 70, height: 70)
-                            .clipShape(Circle())
-                            .foregroundStyle(.gray)
-                            .overlay(alignment: .bottomTrailing) {
+                        Group {
+                            if let avatarURL = URL(string: avatar), !avatar.isEmpty {
+                                AsyncImage(url: avatarURL) { image in
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                } placeholder: {
+                                    Image(systemName: "person.crop.circle.fill")
+                                        .resizable()
+                                        .foregroundStyle(.gray)
+                                }
+                                .frame(width: 70, height: 70)
+                                .clipShape(Circle())
+                            } else {
+                                Image(systemName: "person.crop.circle.fill")
+                                    .resizable()
+                                    .frame(width: 70, height: 70)
+                                    .foregroundStyle(.gray)
+                            }
+                        }
+                        .overlay(alignment: .bottomTrailing) {
                                 ZStack {
                                     Circle()
                                         .fill(Color(uiColor: .inputBackground))
@@ -55,11 +70,12 @@ struct EditProfileView: View {
                         isPresented: $isShowingPhotoMenu
                     ) {
                         Button("Изменить фото") {
+                            avatarDraft = avatar
                             isShowingPhotoLinkAlert = true
                         }
                         
                         Button("Удалить фото", role: .destructive) {
-                            
+                            avatar = ""
                         }
                         
                         Button("Отмена", role: .cancel) {
@@ -107,11 +123,18 @@ struct EditProfileView: View {
                 Spacer()
                 
                 Button("Сохранить") {
-                    viewModel.name = name
-                    viewModel.description = description
-                    viewModel.website = website
-                    
-                    dismiss()
+                    Task {
+                        await viewModel.updateProfile(
+                            name: name,
+                            description: description,
+                            website: website,
+                            avatar: avatar
+                        )
+                        
+                        if viewModel.errorMessage == nil {
+                            dismiss()
+                        }
+                    }
                 }
                 .frame(maxWidth: .infinity)
                 .frame(height: 60)
@@ -125,14 +148,14 @@ struct EditProfileView: View {
                 "Ссылка на фото",
                 isPresented: $isShowingPhotoLinkAlert
             ) {
-                TextField("http://www.example.com", text: .constant(""))
+                TextField("http://www.example.com", text: $avatarDraft)
                 
                 Button("Отмена", role: .cancel) {
                     
                 }
                 
                 Button("Сохранить") {
-                    
+                    avatar = avatarDraft
                 }
             }
             
@@ -149,7 +172,7 @@ struct EditProfileView: View {
                 }
             }
             
-            if isLoading {
+            if viewModel.isLoading {
                 Color(uiColor: .segmentActive)
                     .opacity(0.5)
                     .ignoresSafeArea()
@@ -160,6 +183,3 @@ struct EditProfileView: View {
     }
 }
 
-#Preview {
-    EditProfileView(viewModel: ProfileViewModel())
-}
