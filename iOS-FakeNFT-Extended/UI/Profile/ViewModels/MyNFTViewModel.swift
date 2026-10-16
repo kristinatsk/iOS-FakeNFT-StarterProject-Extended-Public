@@ -29,7 +29,7 @@ final class MyNFTViewModel {
                 let nft = try await nftService.loadNft(id: id)
                 nfts.append(nft)
             } catch {
-
+                print("Failed to load NFT \(id): \(error)")
             }
         }
         
