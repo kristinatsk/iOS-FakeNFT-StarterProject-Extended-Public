@@ -17,6 +17,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "ABC5E1672C31F5AF002B4068"
                BuildableName = "iOS-FakeNFT-Extended.app"
+               BlueprintName = "iOS-FakeNFT-Extended"
                ReferencedContainer = "container:iOS-FakeNFT-Extended.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -36,6 +37,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "ABC5E1772C31F5B0002B4068"
                BuildableName = "iOS-FakeNFT-ExtendedTests.xctest"
+               BlueprintName = "iOS-FakeNFT-ExtendedTests"
                ReferencedContainer = "container:iOS-FakeNFT-Extended.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -46,6 +48,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "ABC5E1812C31F5B0002B4068"
                BuildableName = "iOS-FakeNFT-ExtendedUITests.xctest"
+               BlueprintName = "iOS-FakeNFT-ExtendedUITests"
                ReferencedContainer = "container:iOS-FakeNFT-Extended.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -68,6 +71,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "ABC5E1672C31F5AF002B4068"
             BuildableName = "iOS-FakeNFT-Extended.app"
+            BlueprintName = "iOS-FakeNFT-Extended"
             ReferencedContainer = "container:iOS-FakeNFT-Extended.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -84,6 +88,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "ABC5E1672C31F5AF002B4068"
             BuildableName = "iOS-FakeNFT-Extended.app"
+            BlueprintName = "iOS-FakeNFT-Extended"
             ReferencedContainer = "container:iOS-FakeNFT-Extended.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
