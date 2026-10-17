@@ -33,7 +33,7 @@ struct ProfileUpdateRequest: NetworkRequest {
         "application/x-www-form-urlencoded"
     }
     
-    var httpBody: Data? {
+    var formURLEncodedBody: Data? {
         var queryItems: [URLQueryItem] = []
         
         if let name {

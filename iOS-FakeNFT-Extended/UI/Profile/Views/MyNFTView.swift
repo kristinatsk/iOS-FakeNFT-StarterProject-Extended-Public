@@ -61,7 +61,8 @@ struct MyNFTView: View {
                 List {
                     ForEach(sortedNFTs, id: \.id) { item in
                         HStack(spacing: 16) {
-                            if let imageURL = item.images.first {
+                            if let image = item.images.first,
+                            let imageURL = URL(string: image) {
                                 AsyncImage(url: imageURL) { image in
                                     image
                                         .resizable()

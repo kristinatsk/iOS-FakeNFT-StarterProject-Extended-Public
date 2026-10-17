@@ -50,7 +50,8 @@ struct FavoriteNFTView: View {
                     LazyVGrid(columns: columns, spacing: 20) {
                         ForEach(viewModel.nfts, id: \.id) { item in
                             HStack(spacing: 12) {
-                                if let imageURL = item.images.first {
+                                if let image = item.images.first,
+                                    let imageURL = URL(string: image) {
                                     AsyncImage(url: imageURL) { image in
                                         image
                                             .resizable()
