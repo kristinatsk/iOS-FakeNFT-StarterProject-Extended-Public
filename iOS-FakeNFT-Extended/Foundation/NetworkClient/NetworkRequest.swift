@@ -12,7 +12,7 @@ protocol NetworkRequest {
     var httpMethod: HttpMethod { get }
     var dto: Encodable? { get }
     var contentType: String? { get }
-    var httpBody: Data? { get }
+    var formURLEncodedBody: Data? { get }
 }
 
 // default values
@@ -20,5 +20,5 @@ extension NetworkRequest {
     var httpMethod: HttpMethod { .get }
     var dto: Encodable? { nil }
     var contentType: String? { nil }
-    var httpBody: Data? { nil }
+    var formURLEncodedBody: Data? { nil }
 }

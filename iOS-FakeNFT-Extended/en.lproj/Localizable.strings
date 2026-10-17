@@ -5,3 +5,9 @@
 "Error.unknown" = "Произошла неизвестная ошибка";
 "Error.repeat" = "Повторить";
 "Error.title" = "Ошибка";
+
+"Tab.cart" = "Корзина";
+"cart.empty" = "Корзина пуста";
+"cart.count.format" = "%d NFT";
+"cart.pay" = "К оплате";
+"cart.price" = "Цена";
