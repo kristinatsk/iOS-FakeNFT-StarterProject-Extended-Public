@@ -1,4 +1,5 @@
 import UIKit
+import SwiftUI
 
 extension UIColor {
     // Creates color from a hex string
@@ -58,10 +59,28 @@ extension UIColor {
         ? .yaLightGrayDark
         : .yaLightGrayLight
     }
+    
+    static let inputBackground = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .yaLightGrayDark
+        : .yaLightGrayLight
+    }
 
     static let closeButton = UIColor { traits in
         return traits.userInterfaceStyle == .dark
         ? .yaBlackDark
         : .yaBlackLight
     }
+}
+
+
+// MARK: - Cart
+extension Color {
+    static var cartBackground: Color { Color(.screenBackground) }
+    static var cartTextPrimary: Color { Color(.primaryText) }
+    static var cartButtonBackground: Color { Color(.buttonBackground) }
+    static var cartButtonText: Color { Color(.buttonText) }
+    static var cartAccentGreen: Color { Color(.accentGreen) }
+    static var cartSeparator: Color { Color(.bottomMenu) }
+    static var cartDeleteText: Color { Color(.accentRed) }
 }
